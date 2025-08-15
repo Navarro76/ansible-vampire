@@ -1,0 +1,134 @@
+---
+# *** FUENTES ***
+
+# Verificar que el directorio de fuentes OpenType existe
+- name: Verificar que el directorio de fuentes OpenType existe
+  stat:
+    path: "{{ fonts_opentype }}"
+  register: opentype_dir_stat
+
+# Copiar fuentes OpenType al sistema
+- name: Copiar fuentes OpenType si existe el directorio
+  copy:
+    src: "{{ fonts_opentype }}/"
+    dest: /usr/share/fonts/opentype
+    mode: '0644'
+    owner: root
+    group: root
+    remote_src: false
+    recursive: true
+  when: opentype_dir_stat.stat.exists
+  register: opentype_fonts_copy_result
+
+# Verificar que el directorio de fuentes TrueType existe
+- name: Verificar que el directorio de fuentes TrueType existe
+  stat:
+    path: "{{ fonts_truetype }}"
+  register: truetype_dir_stat
+
+# Copiar fuentes TrueType al sistema
+- name: Copiar fuentes TrueType en /usr/share/fonts/truetype
+  copy:
+    src: "{{ fonts_truetype }}/"
+    dest: /usr/share/fonts/truetype
+    mode: '0644'
+    owner: root
+    group: root
+    remote_src: false
+    recursive: true
+  when: truetype_dir_stat.stat.exists
+  register: truetype_fonts_copy_result
+
+# Recargar la caché de fuentes
+- name: Recargar caché de fuentes
+  command: fc-cache -fv
+  args:
+    warn: false
+  when: >
+    opentype_fonts_copy_result is changed or
+    truetype_fonts_copy_result is changed
+
+# *** WEB-GREETER ***
+
+# Asegurar que existe la ruta /usr/share/web-greeter/themes/
+- name: Asegurar que existe /usr/share/web-greeter/themes/
+  file:
+    path: /usr/share/web-greeter/themes/
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+# Verificar que el directorio de themes para web-greeter existe
+- name: Verificar que el directorio de themes para web-greeter existe
+  stat:
+    path: "{{ web_greeter_themes }}"
+  register: web_greeter_themes_dir_stat
+
+# Copiar temas de web-greeter (dracula, gruvbox y simple)
+- name: Copiar temas de web-greeter al sistema
+  copy:
+    src: "{{ web_greeter_themes }}"
+    dest: /usr/share/web-greeter/themes/
+    mode: '0755'
+    owner: root
+    group: root
+    remote_src: false
+    recursive: true
+  when: web_greeter_themes_dir_stat.stat.exists
+
+# Verificar que el archivo de configuración de web-greeter existe
+- name: Verificar que el archivo de configuración de web-greeter existe
+  stat:
+    path: "{{ web_greeter_config }}"
+  register: web_greeter_config_stat
+
+# Copiar archivo de configuración de web-greeter
+- name: Copiar configuración de web-greeter
+  copy:
+    src: "{{ web_greeter_config }}"
+    dest: /etc/lightdm/web-greeter.yml
+    mode: '0644'
+  when: web_greeter_config_stat.stat.exists
+
+# *** GRUB ***
+
+# Verificar que el directorio de temas de grub existe
+- name: Verificar que el directorio de temas de grub existe
+  stat:
+    path: "{{ grub_theme_dir }}"
+  register: grub_theme_dir_stat
+
+# Copiar tema dracula para grub
+- name: Copiar tema de grub
+  copy:
+    src: "{{ grub_theme_dir }}"
+    dest: /boot/grub/themes
+    mode: '0755'
+    owner: root
+    group: root
+    remote_src: false
+    recursive: true
+  when: grub_theme_dir_stat.stat.exists
+
+# Verificar que el archivo de configuración de grub existe
+- name: Verificar que el archivo de configuración de grub existe
+  stat:
+    path: "{{ grub_config }}"
+  register: grub_config_stat
+
+# Copiar archivo de configuración de grub
+- name: Copiar configuración de grub
+  copy:
+    src: "{{ grub_config }}"
+    dest: /etc/default/grub
+    mode: '0644'
+    owner: root
+    group: root
+    remote_src: false
+  when: grub_config_stat.stat.exists
+
+# Regenerar configuración grub
+- name: Regenerar configuración grub
+  command: grub-mkconfig -o /boot/grub/grub.cfg
+

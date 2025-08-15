@@ -1,0 +1,18 @@
+---
+resources_dir: "{{ role_path }}/files"
+fonts_home: "{{ resources_dir }}/fonts/home"
+fonts_usr_local: "{{ resources_dir }}/fonts/usr-local"
+fonts_opentype: "{{ resources_dir }}/fonts/opentype"
+fonts_truetype: "{{ resources_dir }}/fonts/truetype"
+
+mc_skins: "{{ resources_dir }}/mc/skin"
+wallpapers: "{{ resources_dir }}/wallpapers"
+
+lxappearance_themes_zip: "{{ resources_dir }}/lxappearance/temas/gtk-master.zip"
+lxappearance_icons: "{{ resources_dir }}/lxappearance/icons"
+
+web_greeter_config: "{{ resources_dir }}/web-greeter/web-greeter.yml"
+web_greeter_themes: "{{ resources_dir }}/web-greeter/themes"
+
+grub_theme_dir: "{{ resources_dir }}/grub/themes/dracula"
+grub_config: "{{ resources_dir }}/grub/grub"

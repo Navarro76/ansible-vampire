@@ -1,0 +1,65 @@
+# *** MIDNIGHT COMMANDER ***
+
+# Verificar que el directorio de skins de mc existe
+- name: Verificar que el directorio de skins de mc existe
+  stat:
+    path: "{{ mc_skins }}"
+  register: mc_skins_dir_stat
+
+# Copiar skins de mc
+- name: Copiar skins de mc
+  copy:
+    src: "{{ item }}"
+    dest: /usr/share/mc/skins/
+    mode: '0644'
+  with_fileglob:
+    - "{{ mc_skins }}/*.ini"
+  when: mc_skins_dir_stat.stat.exists
+
+# *** WALLPAPERS ***
+
+# Verificar que el directorio de wallpapers existe
+- name: Verificar que el directorio de wallpapers existe
+  stat:
+    path: "{{ wallpapers }}"
+  register: wallpapers_dir_stat
+
+# Copiar wallpapers al sistema
+- name: Copiar wallpapers al sistema
+  copy:
+    src: "{{ item }}"
+    dest: /usr/share/backgrounds/
+    mode: '0644'
+  with_fileglob:
+    - "{{ wallpapers }}/*"
+  when: wallpapers_dir_stat.stat.exists
+
+# *** FUENTES EN /usr/local/share/fonts ***
+
+# Verificar que el directorio fonts_usr_local existe
+- name: Verificar que el directorio de fuentes en /usr/local/share/fonts existe
+  stat:
+    path: "{{ fonts_usr_local }}"
+  register: fonts_usr_local_dir_stat
+
+# Copiar fuentes adicionales a /usr/local/share/fonts
+- name: Copiar fuentes en /usr/local/share/fonts
+  copy:
+    src: "{{ fonts_usr_local }}/"
+    dest: /usr/local/share/fonts
+    mode: '0644'
+    owner: root
+    group: root
+    remote_src: false
+    recursive: true
+  when: fonts_usr_local_dir_stat.stat.exists
+  register: local_fonts_copy_result
+  
+# *** ACTUALIZAR CACHÉ DE FUENTES SOLO SI CAMBIARON FUENTES ***
+
+- name: Recargar caché de fuentes si se copiaron nuevas fuentes
+  command: fc-cache -fv
+  args:
+    warn: false
+  when: local_fonts_copy_result is changed
+

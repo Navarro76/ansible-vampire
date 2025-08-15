@@ -1,0 +1,31 @@
+---
+- name: Establecer permisos de directorio home
+  file:
+    path: "/home/alex"
+    mode: '0710'
+
+- name: Crear directorio ~/.mpd/playlists
+  file:
+    path: "/home/alex/.mpd/playlists"
+    state: directory
+    mode: '0777'
+    owner: "alex"
+    group: "alex"
+
+- name: Copiar configuración de MPD para usuario
+  copy:
+    src: "mpd.conf"
+    dest: "/home/alex/.mpd/mpd.conf"
+    owner: "alex"
+    group: "alex"
+    mode: '0644'
+
+- name: Habilitar mpd como servicio de usuario para alex
+  become: true
+  become_user: alex
+  systemd:
+    name: mpd.service
+    scope: user
+    enabled: true
+    daemon_reload: true
+    state: started

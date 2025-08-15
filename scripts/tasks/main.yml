@@ -1,0 +1,22 @@
+---
+- name: Incluir instalación común de scripts
+  import_tasks: install_common.yml
+  become: true
+  tags: [scripts, install]
+
+- name: Configuración específica para root
+  import_tasks: config_root.yml
+  become: true
+  become_user: root
+  tags: [scripts, config, root]
+
+- name: Configuración específica para el usuario alex
+  import_tasks: config_alex.yml
+  become: true
+  become_user: alex
+  tags: [scripts, config, alex]
+
+
+
+
+

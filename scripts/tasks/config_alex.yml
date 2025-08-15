@@ -1,0 +1,23 @@
+---
+
+- name: Copiar scripts del directorio bin a ~/.config/bin/
+  copy:
+    src: "{{ bin_scripts }}"
+    dest: "/home/alex/.config/bin/"
+    mode: '0755'
+    owner: alex
+    group: alex
+  # notify: set_permissions
+
+- name: Asignar permisos a scripts específicos del usuario alex
+  file:
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "/home/alex/.config/bspwm/scripts/bspwm_resize"
+    - "/home/alex/.config/bin/ethernet_status.sh"
+    - "/home/alex/.config/bin/htb_status.sh"
+    - "/home/alex/.config/bin/htb_target.sh"
+    - "/home/alex/.config/polybar/launch.sh"
+
+

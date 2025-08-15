@@ -1,0 +1,89 @@
+# Powerlevel10k (root)
+- name: Clonar powerlevel10k (root)
+  git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: /root/.powerlevel10k
+    depth: 1
+
+# Cambiar shell a zsh (alex)
+- name: Cambiar shell a ZSH para alex
+  user:
+    name: alex
+    shell: /usr/bin/zsh
+  
+# Cambiar shell a zsh (root)
+- name: Cambiar shell a ZSH para root
+  user:
+    name: root
+    shell: /usr/bin/zsh
+
+- name: Eliminar .zshrc de root
+  file:
+    path: /root/.zshrc
+    state: absent
+
+- name: Enlazar .zshrc de alex a root
+  file:
+    src: /home/alex/.zshrc
+    dest: /root/.zshrc
+    state: link
+    force: true
+
+# Neovim (root)
+- name: Crear carpetas de config Neovim (root)
+  file:
+    path: "/root/.config/nvim"
+    state: directory
+    recurse: yes
+
+- name: Copiar init.lua para root
+  copy:
+    src: "{{ neovim_config }}"
+    dest: /root/.config/nvim/init.lua
+    mode: '0644'
+
+# Oh My Tmux (root)
+- name: Clonar Oh My Tmux (root)
+  git:
+    repo: https://github.com/gpakosz/.tmux.git
+    dest: /root/.tmux
+    depth: 1
+
+- name: Enlazar .tmux.conf (root)
+  file:
+    src: /root/.tmux/.tmux.conf
+    dest: /root/.tmux.conf
+    state: link
+    force: true
+
+- name: Copiar tmux.conf.local (root)
+  copy:
+    src: "{{ tmux_config_local }}"
+    dest: /root/.tmux.conf.local
+    mode: '0644'
+
+# Tema Dracula para root
+- name: Clonar Dracula OMT para root
+  git:
+    repo: https://github.com/atgmello/dracula.omt.git
+    dest: /root/dracula.omt
+    depth: 1
+
+- name: Crear carpeta de temas Dracula (root)
+  file:
+    path: /root/.config/oh-my-tmux/themes
+    state: directory
+    recurse: true
+
+- name: Enlazar dracula.conf (root)
+  file:
+    src: /root/dracula.omt/dracula.conf
+    dest: /root/.config/oh-my-tmux/themes/dracula.conf
+    state: link
+    force: true
+
+# Reiniciar servidor de tmux
+- name: Reiniciar servidor de tmux
+  shell: tmux kill-server || true
+  become: false
+  tags: [optional]

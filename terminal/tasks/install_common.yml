@@ -1,0 +1,47 @@
+# Instalaciones apt y deb
+- name: Instalar paquetes base
+  apt:
+    name: "{{ terminal_packages }}"
+    state: present
+    update_cache: true
+
+- name: Instalar lsd desde .deb
+  apt:
+    deb: "{{ lsd_deb }}"
+  when: not ansible_check_mode
+
+- name: Instalar bat desde .deb
+  apt:
+    deb: "{{ bat_deb }}"
+  when: not ansible_check_mode
+
+# Plugins ZSH (apt + zsh-sudo)
+- name: Instalar plugins de ZSH
+  apt:
+    name:
+      - zsh-syntax-highlighting
+      - zsh-autosuggestions
+    state: present
+
+- name: Crear carpeta zsh-sudo
+  file:
+    path: /usr/share/zsh-sudo
+    state: directory
+
+- name: Copiar plugin zsh-sudo
+  copy:
+    src: "{{ zsh_sudo_plugin }}"
+    dest: /usr/share/zsh-sudo/sudo.plugin.zsh
+    mode: '0644'
+
+# Neovim (AppImage)
+- name: Dar permisos a AppImage de Neovim
+  file:
+    path: "{{ neovim_appimage }}"
+    mode: '0755'
+
+- name: Copiar Neovim AppImage a /usr/local/bin
+  copy:
+    src: "{{ neovim_appimage }}"
+    dest: /usr/local/bin/nvim
+    mode: '0755'

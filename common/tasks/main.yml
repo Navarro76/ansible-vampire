@@ -1,0 +1,6 @@
+---
+- import_tasks: install_common.yml
+  become: true
+  tags: [common, install]
+
+

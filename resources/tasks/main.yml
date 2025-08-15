@@ -1,0 +1,17 @@
+---
+- name: Incluir tareas comunes
+  import_tasks: install_common.yml
+  become: true
+  tags: [resources, install]
+
+- name: Configuración para el usuario root
+  import_tasks: config_root.yml
+  become: true
+  become_user: root
+  tags: [resources, config, root]
+
+- name: Configuración para el usuario alex
+  import_tasks: config_alex.yml
+  become: true
+  become_user: alex
+  tags: [resources, config, alex]

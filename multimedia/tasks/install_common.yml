@@ -1,0 +1,10 @@
+---
+- name: Instalar paquetes multimedia
+  apt:
+    name: "{{ multimedia_packages }}"
+    state: present
+    update_cache: true
+    install_recommends: false  # Opcional, evita instalar sugerencias automáticas
+  tags: multimedia
+
+

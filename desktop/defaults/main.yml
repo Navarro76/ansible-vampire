@@ -1,0 +1,75 @@
+---
+
+# Ruta base para clonar repos desde GitHub
+github_dir: "/home/{{ ansible_user_id }}/github"
+
+# Directorios específicos para proyectos
+polybar_dir: "{{ github_dir }}/polybar"
+picom_dir: "{{ github_dir }}/picom"
+
+# Ruta al archivo .deb de web-greeter (este está dentro del rol)
+web_greeter_deb_path: "{{ role_path }}/files/web-greeter-3.5.3-debian.deb"
+
+desktop_packages:
+  - bspwm
+  - rofi
+  - lightdm
+  - lightdm-gtk-greeter
+  - lxappearance
+  - qt5ct
+  - sxhkd
+  - feh
+
+polybar_dependencies:
+  - cmake
+  - cmake-data
+  - pkg-config
+  - python3-sphinx
+  - libcairo2-dev
+  - libxcb1-dev
+  - libxcb-util0-dev
+  - libxcb-randr0-dev
+  - libxcb-composite0-dev
+  - python3-xcbgen
+  - xcb-proto
+  - libxcb-image0-dev
+  - libxcb-ewmh-dev
+  - libxcb-icccm4-dev
+  - libxcb-xkb-dev
+  - libxcb-xrm-dev
+  - libxcb-cursor-dev
+  - libasound2-dev
+  - libpulse-dev
+  - libjsoncpp-dev
+  - libmpdclient-dev
+  - libcurl4-openssl-dev
+  - libuv1-dev
+  - libnl-genl-3-dev
+
+picom_dependencies:
+  - meson
+  - libxext-dev
+  - libxcb1-dev
+  - libxcb-damage0-dev
+  - libxcb-xfixes0-dev
+  - libxcb-shape0-dev
+  - libxcb-render-util0-dev
+  - libxcb-render0-dev
+  - libxcb-composite0-dev
+  - libxcb-image0-dev
+  - libxcb-present-dev
+  - libxcb-xinerama0-dev
+  - libpixman-1-dev
+  - libdbus-1-dev
+  - libconfig-dev
+  - libgl1-mesa-dev
+  - libpcre2-dev
+  - libevdev-dev
+  - uthash-dev
+  - libev-dev
+  - libx11-xcb-dev
+  - libxcb-glx0-dev
+  - libpcre3
+  - libpcre3-dev
+
+

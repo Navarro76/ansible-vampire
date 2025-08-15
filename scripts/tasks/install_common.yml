@@ -1,0 +1,27 @@
+---
+- name: Copiar whichSystem.py a /usr/local/bin/
+  copy:
+    src: "{{ hacker_whichSystem }}"
+    dest: "/usr/local/bin/whichSystem.py"
+    mode: '0755'
+
+- name: Copiar screenshot a /usr/local/bin/
+  copy:
+    src: "{{ hacker_screenshot }}"
+    dest: "/usr/local/bin/screenshot"
+    mode: '0755'
+
+- name: Copiar fastTCPScan.go a /usr/bin/
+  copy:
+    src: "{{ hacker_fastTCPScan }}"
+    dest: "/usr/bin/fastTCPScan.go"
+    mode: '0644'
+
+- name: Compilar fastTCPScan.go
+  command: go build -ldflags "-s -w" -o /usr/bin/fastTCPScan /usr/bin/fastTCPScan.go
+  args:
+    creates: /usr/bin/fastTCPScan
+
+- name: Comprimir fastTCPScan con upx
+  command: upx --best /usr/bin/fastTCPScan
+  when: "'upx' in ansible_facts.packages"

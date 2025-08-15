@@ -1,0 +1,25 @@
+---
+- name: Configuración completa del sistema
+  hosts: localhost
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  roles:
+    - role: common
+      tags: [common]
+
+    - role: terminal
+      tags: [terminal]
+
+    - role: desktop
+      tags: [desktop]
+
+    - role: scripts
+      tags: [scripts]
+
+    - role: multimedia
+      tags: [multimedia]
+
+    - role: resources
+      tags: [resources]

@@ -1,0 +1,5 @@
+---
+# Por si se necesita alguna configuración extra para root.
+- name: Dummy - Configuración específica para root
+  debug:
+    msg: "No se requiere configuración adicional para root por ahora."

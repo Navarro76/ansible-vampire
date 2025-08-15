@@ -1,0 +1,16 @@
+# Ignorar carpetas files dentro de cada rol
+common/files/
+desktop/files/
+multimedia/files/
+resources/files/
+scripts/files/
+terminal/files/
+
+# Ignorar archivos dentro de carpetas roles/tasks
+desktop/tasks/config_root_v1.yml 
+desktop/tasks/main2.yml 
+terminal/tasks/main2.yml 
+terminal/tasks/main3.yml
+
+# Ignorar archivo files.xlsx en la raíz
+files.xlsx

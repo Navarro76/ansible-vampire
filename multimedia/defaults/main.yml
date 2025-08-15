@@ -1,0 +1,12 @@
+---
+multimedia_files_dir: "{{ role_path }}/files"
+
+# Ruta al archivo mpd.conf (ajusta si usas un subdirectorio)
+mpd_config: "{{ multimedia_files_dir }}/mpd.conf"
+
+multimedia_packages:
+  - sonata
+  - ncmpcpp
+  - mpd
+  - smplayer
+  - mpc
