@@ -2,63 +2,48 @@
 
 # *** WALLPAPERS (alex) ***
 
-# Crear carpeta ~/Wallpaper
 - name: Crear carpeta ~/Wallpaper
   file:
-    path: /home/alex/Wallpaper
+    path: ~/Wallpaper
     state: directory
     mode: '0755'
-    owner: alex
 
-# Verificar que el directorio de wallpapers existe
 - name: Verificar que el directorio de wallpapers existe
   stat:
     path: "{{ wallpapers }}"
   register: wallpapers_home_dir_stat
 
-# Copiar wallpapers solo si el directorio existe
-- name: Copiar wallpapers a home
+- name: Copiar wallpapers a ~/Wallpaper solo si existe el directorio
   copy:
     src: "{{ item }}"
-    dest: /home/alex/Wallpaper/
-    owner: alex
+    dest: ~/Wallpaper/
   with_fileglob:
     - "{{ wallpapers }}/*"
   when: wallpapers_home_dir_stat.stat.exists
 
 # *** FUENTES EN ~/.local/share/fonts ***
 
-# Crear carpeta ~/.local/share/fonts (si no existe)
-- name: Crear ~/.local/share/fonts si no existe
+- name: Crear carpeta ~/.local/share/fonts si no existe
   file:
-    path: /home/alex/.local/share/fonts
+    path: ~/.local/share/fonts
     state: directory
     mode: '0755'
-    owner: alex
-    group: alex
 
-# Verificar que el directorio de fuentes personales existe
 - name: Verificar que el directorio de fuentes personales existe
   stat:
     path: "{{ fonts_home }}"
   register: fonts_home_dir_stat
 
-# Copiar fuentes personales solo si el origen existe
-- name: Copiar fuentes en ~/.local/share/fonts (alex)
+- name: Copiar fuentes personales en ~/.local/share/fonts solo si el origen existe
   copy:
     src: "{{ fonts_home }}/"
-    dest: /home/alex/.local/share/fonts/
+    dest: ~/.local/share/fonts/
     mode: '0644'
-    owner: alex
-    group: alex
     recursive: true
   when: fonts_home_dir_stat.stat.exists
   register: fonts_home_copy_result
 
-# Recargar caché de fuentes si se copiaron nuevas
-- name: Recargar caché de fuentes
-  become: true
-  become_user: alex
+- name: Recargar caché de fuentes sólo si se copiaron nuevas
   command: fc-cache -fv
   args:
     warn: false
@@ -66,29 +51,22 @@
 
 # *** PERSONALIZAR lxappearance ***
 
-# Extraer tema Dracula
-- name: Extraer y mover tema lxappearance
+- name: Extraer y mover tema Dracula (lxappearance)
   unarchive:
     src: "{{ lxappearance_themes_zip }}"
-    dest: /home/alex/.themes/
+    dest: ~/.themes/
     remote_src: false
-    owner: alex
-    group: alex
 
-# Renombrar carpeta si aún no existe
-- name: Renombrar gtk-master a dracula
-  command: mv /home/alex/.themes/gtk-master /home/alex/.themes/dracula
+- name: Renombrar carpeta gtk-master a dracula
+  command: mv ~/.themes/gtk-master ~/.themes/dracula
   args:
-    creates: /home/alex/.themes/dracula
+    creates: ~/.themes/dracula
 
-# Iconos y cursores Dracula (extrae todo tipo .zip y .tar)
-- name: Extraer y mover iconos y cursores
+- name: Extraer y mover iconos y cursores Dracula (extrae todo tipo .zip y .tar)
   unarchive:
     src: "{{ item }}"
-    dest: /home/alex/.icons/
+    dest: ~/.icons/
     remote_src: false
-    owner: alex
-    group: alex
   with_fileglob:
     - "{{ lxappearance_icons }}/*.zip"
     - "{{ lxappearance_icons }}/*.tar"

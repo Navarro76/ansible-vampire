@@ -1,71 +1,77 @@
+---
 # FZF (usuario alex)
+
 - name: Clonar fzf (alex)
   git:
     repo: https://github.com/junegunn/fzf.git
-    dest: /home/alex/.fzf
+    dest: ~/.fzf
     depth: 1
 
 - name: Ejecutar instalador de fzf (alex)
-  shell: "/home/alex/.fzf/install --all"
+  shell: "~/.fzf/install --all"
   args:
-    chdir: "/home/alex"
-    creates: "/home/alex/.fzf.zsh"
+    chdir: "~"
+    creates: "~/.fzf.zsh"
 
 # Powerlevel10k (alex)
+
 - name: Clonar powerlevel10k (alex)
   git:
     repo: https://github.com/romkatv/powerlevel10k.git
-    dest: /home/alex/.powerlevel10k
+    dest: ~/.powerlevel10k
     depth: 1
 
 # Neovim (alex)
+
 - name: Crear carpetas de config Neovim (alex)
   file:
-    path: "/home/alex/.config/nvim"
+    path: "~/.config/nvim"
     state: directory
     recurse: yes
 
 - name: Copiar init.lua para alex
   copy:
     src: "{{ neovim_config }}"
-    dest: /home/alex/.config/nvim/init.lua
+    dest: ~/.config/nvim/init.lua
     mode: '0644'
 
 # Oh My Tmux (alex)
+
 - name: Clonar Oh My Tmux (alex)
   git:
     repo: https://github.com/gpakosz/.tmux.git
-    dest: /home/alex/.tmux
+    dest: ~/.tmux
     depth: 1
 
 - name: Enlazar .tmux.conf (alex)
   file:
-    src: /home/alex/.tmux/.tmux.conf
-    dest: /home/alex/.tmux.conf
+    src: ~/.tmux/.tmux.conf
+    dest: ~/.tmux.conf
     state: link
     force: true
 
 - name: Copiar tmux.conf.local para alex
   copy:
     src: "{{ tmux_config_local }}"
-    dest: /home/alex/.tmux.conf.local
+    dest: ~/.tmux.conf.local
 
 # Tema Dracula para Oh My Tmux (alex)
+
 - name: Clonar Dracula OMT para alex
   git:
     repo: https://github.com/atgmello/dracula.omt.git
-    dest: /home/alex/dracula.omt
+    dest: ~/dracula.omt
     depth: 1
 
 - name: Crear carpeta de temas Dracula (alex)
   file:
-    path: /home/alex/.config/oh-my-tmux/themes
+    path: ~/.config/oh-my-tmux/themes
     state: directory
     recurse: true
 
 - name: Enlazar dracula.conf (alex)
   file:
-    src: /home/alex/dracula.omt/dracula.conf
-    dest: /home/alex/.config/oh-my-tmux/themes/dracula.conf
+    src: ~/dracula.omt/dracula.conf
+    dest: ~/.config/oh-my-tmux/themes/dracula.conf
     state: link
     force: true
