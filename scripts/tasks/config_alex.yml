@@ -3,7 +3,7 @@
 - name: Copiar scripts del directorio bin a ~/.config/bin/
   copy:
     src: "{{ bin_scripts }}"
-    dest: "~/.config/bin/"
+    dest: "~/.config/"
     mode: '0755'
 
 - name: Asignar permisos a scripts específicos del usuario alex

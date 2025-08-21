@@ -21,33 +21,6 @@
     - "{{ wallpapers }}/*"
   when: wallpapers_home_dir_stat.stat.exists
 
-# *** FUENTES EN ~/.local/share/fonts ***
-
-- name: Crear carpeta ~/.local/share/fonts si no existe
-  file:
-    path: ~/.local/share/fonts
-    state: directory
-    mode: '0755'
-
-- name: Verificar que el directorio de fuentes personales existe
-  stat:
-    path: "{{ fonts_home }}"
-  register: fonts_home_dir_stat
-
-- name: Copiar fuentes personales en ~/.local/share/fonts solo si el origen existe
-  copy:
-    src: "{{ fonts_home }}/"
-    dest: ~/.local/share/fonts/
-    mode: '0644'
-    recursive: true
-  when: fonts_home_dir_stat.stat.exists
-  register: fonts_home_copy_result
-
-- name: Recargar caché de fuentes sólo si se copiaron nuevas
-  command: fc-cache -fv
-  args:
-    warn: false
-  when: fonts_home_copy_result is changed
 
 # *** PERSONALIZAR lxappearance ***
 

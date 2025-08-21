@@ -5,7 +5,7 @@ fonts_usr_local: "{{ resources_dir }}/fonts/usr-local"
 fonts_opentype: "{{ resources_dir }}/fonts/opentype"
 fonts_truetype: "{{ resources_dir }}/fonts/truetype"
 
-mc_skins: "{{ resources_dir }}/mc/skin"
+mc_skins: "{{ resources_dir }}/mc/skins"
 wallpapers: "{{ resources_dir }}/wallpapers"
 
 lxappearance_themes_zip: "{{ resources_dir }}/lxappearance/temas/gtk-master.zip"

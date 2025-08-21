@@ -11,6 +11,15 @@
     dest: "/usr/local/bin/screenshot"
     mode: '0755'
 
+- name: Asignar permisos a scripts específicos
+  file:
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "/usr/local/bin/whichSystem.py"
+    - "/usr/local/bin/screenshot"
+
+# ========== fastTCPScan ==========
 - name: Copiar fastTCPScan.go a /usr/bin/
   copy:
     src: "{{ hacker_fastTCPScan }}"
@@ -22,6 +31,12 @@
   args:
     creates: /usr/bin/fastTCPScan
 
-- name: Comprimir fastTCPScan con upx
+- name: Verificar si upx está disponible
+  command: command -v upx
+  register: upx_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Comprimir fastTCPScan con upx (si está disponible)
   command: upx --best /usr/bin/fastTCPScan
-  when: "'upx' in ansible_facts.packages"
+  when: upx_check.rc == 0

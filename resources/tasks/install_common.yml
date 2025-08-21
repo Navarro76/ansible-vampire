@@ -46,7 +46,7 @@
 - name: Copiar fuentes en /usr/local/share/fonts
   copy:
     src: "{{ fonts_usr_local }}/"
-    dest: /usr/local/share/fonts
+    dest: /usr/local/share/fonts/
     mode: '0644'
     owner: root
     group: root

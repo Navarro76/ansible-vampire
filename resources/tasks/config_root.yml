@@ -9,7 +9,7 @@
 - name: Copiar fuentes OpenType si existe el directorio
   copy:
     src: "{{ fonts_opentype }}/"
-    dest: /usr/share/fonts/opentype
+    dest: /usr/share/fonts/opentype/
     mode: '0644'
     remote_src: false
     recursive: true
@@ -24,7 +24,7 @@
 - name: Copiar fuentes TrueType en /usr/share/fonts/truetype
   copy:
     src: "{{ fonts_truetype }}/"
-    dest: /usr/share/fonts/truetype
+    dest: /usr/share/fonts/truetype/
     mode: '0644'
     remote_src: false
     recursive: true
@@ -54,7 +54,7 @@
 
 - name: Copiar temas de web-greeter (dracula, gruvbox y simple) al sistema
   copy:
-    src: "{{ web_greeter_themes }}"
+    src: "{{ web_greeter_themes }}/"
     dest: /usr/share/web-greeter/themes/
     mode: '0755'
     remote_src: false
@@ -83,7 +83,7 @@
 - name: Copiar tema dracula para grub
   copy:
     src: "{{ grub_theme_dir }}"
-    dest: /boot/grub/themes
+    dest: /boot/grub/themes/
     mode: '0755'
     remote_src: false
     recursive: true
