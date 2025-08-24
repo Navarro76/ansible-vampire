@@ -9,17 +9,17 @@
     - role: common
       tags: [common]
 
-    - role: terminal
-      tags: [terminal]
-
     - role: desktop
       tags: [desktop]
 
-    - role: scripts
-      tags: [scripts]
+    - role: terminal
+      tags: [terminal]
 
     - role: multimedia
       tags: [multimedia]
 
     - role: resources
       tags: [resources]
+
+    - role: scripts
+      tags: [scripts]
