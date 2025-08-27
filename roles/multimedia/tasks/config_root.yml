@@ -24,3 +24,6 @@
     enabled: false
     masked: true
     state: stopped
+
+- name: Habilitar linger para alex
+  command: loginctl enable-linger alex

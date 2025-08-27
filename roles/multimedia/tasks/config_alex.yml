@@ -16,10 +16,11 @@
     dest: "~/.mpd/mpd.conf"
     mode: '0644'
 
-- name: Habilitar mpd como servicio de usuario para alex
+- name: Habilitar servicio mpd para alex (systemd user)
   systemd:
     name: mpd.service
-    scope: user
     enabled: true
-    daemon_reload: true
+    scope: user
     state: started
+#    daemon_reload: true
+
