@@ -3,12 +3,12 @@
   become: true
   tags: [terminal, install]
 
-- import_tasks: config_root.yml
-  become: true
-  become_user: root
-  tags: [terminal, config, root]
-
 - import_tasks: config_alex.yml
   become: true
   become_user: alex
   tags: [terminal, config, alex]
+
+- import_tasks: config_root.yml
+  become: true
+  become_user: root
+  tags: [terminal, config, root]
