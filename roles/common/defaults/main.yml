@@ -2,6 +2,7 @@
 common_env_packages:
   - build-essential
   - libpam0g-dev
+  - golang
   - git
   - vim
   - xcb
