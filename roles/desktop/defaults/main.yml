@@ -13,8 +13,8 @@ web_greeter_deb_path: "{{ role_path }}/files/web-greeter-3.5.3-debian.deb"
 desktop_packages:
   - bspwm
   - rofi
-  - lightdm
-  - lightdm-gtk-greeter
+#  - lightdm
+#  - lightdm-gtk-greeter
   - lxappearance
   - qt5ct
   - sxhkd
@@ -72,4 +72,11 @@ picom_dependencies:
   - libpcre3
   - libpcre3-dev
 
-
+#web_greeter_dependencies:
+#  - python3-gi
+#  - python3-pyqt5
+#  - python3-pyqt5.qtwebengine
+#  - python3-ruamel.yaml
+#  - python3-pyinotify
+#  - libqt5webengine5
+#  - gobject-introspection

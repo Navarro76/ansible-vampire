@@ -20,6 +20,24 @@
     name: "{{ picom_dependencies }}"
     state: present
 
+
+- name: Eliminar LightDM y sus greeters
+  ansible.builtin.apt:
+    name:
+      - lightdm
+      - lightdm-gtk-greeter
+      - liblightdm-gobject-1-0
+      - liblightdm-gobject-dev
+    state: absent
+    purge: yes
+    
+# Dependencias para web-greeter
+#- name: Instalar dependencias para web-greeter
+#  apt:
+#    name: "{{ web_greeter_dependencies }}"
+#    state: present
+
+
 # Instalación de Polybar
 - name: Clonar repositorio de polybar
   git:

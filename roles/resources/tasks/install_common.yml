@@ -1,5 +1,10 @@
 # *** MIDNIGHT COMMANDER ***
 
+- name: Instalar rsync (requerido por synchronize)
+  ansible.builtin.package:
+    name: rsync
+    state: present
+
 # Verificar que el directorio de skins de mc existe
 - name: Verificar que el directorio de skins de mc existe
   stat:
@@ -37,29 +42,30 @@
 # *** FUENTES EN /usr/local/share/fonts ***
 
 # Verificar que el directorio fonts_usr_local existe
-- name: Verificar que el directorio de fuentes en /usr/local/share/fonts existe
+- name: Verificar que el directorio fonts_usr_local existe
   stat:
     path: "{{ fonts_usr_local }}"
   register: fonts_usr_local_dir_stat
 
-# Copiar fuentes adicionales a /usr/local/share/fonts
-- name: Copiar fuentes en /usr/local/share/fonts
-  copy:
+- name: Copiar árbol de fuentes completo
+  ansible.posix.synchronize:
     src: "{{ fonts_usr_local }}/"
     dest: /usr/local/share/fonts/
-    mode: '0644'
-    owner: root
-    group: root
-    remote_src: false
+    archive: true
     recursive: true
+    delete: false
   when: fonts_usr_local_dir_stat.stat.exists
   register: local_fonts_copy_result
-  
-# *** ACTUALIZAR CACHÉ DE FUENTES SOLO SI CAMBIARON FUENTES ***
 
+- name: Ajustar permisos de las fuentes
+  ansible.builtin.file:
+    path: /usr/local/share/fonts
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0644'
+    
 - name: Recargar caché de fuentes si se copiaron nuevas fuentes
-  command: fc-cache -fv
-  args:
-    warn: false
+  ansible.builtin.command: fc-cache -f -v
   when: local_fonts_copy_result is changed
 

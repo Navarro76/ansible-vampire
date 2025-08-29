@@ -1,0 +1,65 @@
+---
+- name: Clonar Ly desde Codeberg
+  ansible.builtin.git:
+    repo: "https://codeberg.org/fairyglade/ly.git"
+    dest: /usr/local/src/ly
+    version: "master"
+    update: yes
+
+- name: Compilar Ly con Zig
+  ansible.builtin.command: /usr/local/zig/zig build
+  args:
+    chdir: /usr/local/src/ly
+  register: ly_build
+  changed_when: "'Built executable' in ly_build.stdout"
+
+- name: Instalar Ly en el sistema
+  ansible.builtin.command: /usr/local/zig/zig build installexe -Dinit_system=systemd
+  args:
+    chdir: /usr/local/src/ly
+  register: ly_install
+  changed_when: "'Installed executable' in ly_install.stdout"
+
+- name: Deshabilitar y purgar LightDM y greeters si existen
+  ansible.builtin.apt:
+    name:
+      - lightdm
+      - lightdm-gtk-greeter
+      - gir1.2-lightdm-1
+      - liblightdm-gobject-1-0
+      - liblightdm-gobject-dev
+    state: absent
+    purge: yes
+
+- name: Eliminar symlink display-manager si apunta a LightDM
+  ansible.builtin.file:
+    path: /etc/systemd/system/display-manager.service
+    state: absent
+  ignore_errors: true
+
+- name: Habilitar Ly service
+  ansible.builtin.systemd:
+    name: ly.service
+    enabled: yes
+    state: started
+
+- name: Configurar PAM mínimo funcional para Ly
+  ansible.builtin.copy:
+    dest: /etc/pam.d/ly
+    content: |
+      auth       required   pam_unix.so
+      account    required   pam_unix.so
+      password   required   pam_unix.so
+      session    required   pam_unix.so
+    mode: '0644'
+
+- name: Deshabilitar getty@tty2 (liberar TTY2)
+  ansible.builtin.systemd:
+    name: getty@tty2.service
+    enabled: no
+    state: stopped
+
+- name: Reiniciar Ly service
+  ansible.builtin.systemd:
+    name: ly.service
+    state: restarted

@@ -24,6 +24,12 @@
 
 # *** PERSONALIZAR lxappearance ***
 
+- name: Crear directorio ~/.themes si no existe
+  ansible.builtin.file:
+    path: ~/.themes
+    state: directory
+    mode: '0755'
+
 - name: Extraer y mover tema Dracula (lxappearance)
   unarchive:
     src: "{{ lxappearance_themes_zip }}"
@@ -35,6 +41,12 @@
   args:
     creates: ~/.themes/dracula
 
+- name: Crear directorio ~/.icons si no existe
+  ansible.builtin.file:
+    path: ~/.icons
+    state: directory
+    mode: '0755'
+
 - name: Extraer y mover iconos y cursores Dracula (extrae todo tipo .zip y .tar)
   unarchive:
     src: "{{ item }}"
@@ -42,7 +54,7 @@
     remote_src: false
   with_fileglob:
     - "{{ lxappearance_icons }}/*.zip"
-    - "{{ lxappearance_icons }}/*.tar"
+    - "{{ lxappearance_icons }}/*.tar.xz"
 
 
 
