@@ -1,6 +1,7 @@
 ---
 common_env_packages:
   - build-essential
+  - libpam0g-dev
   - git
   - vim
   - xcb
@@ -25,6 +26,7 @@ common_extra_packages:
   - wmname
   - acpi
   - xorg
+  - brightnessctl
   - imagemagick
   - ranger
   - kitty

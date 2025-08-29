@@ -3,10 +3,14 @@
   become: true
   tags: [desktop, install]
 
-- import_tasks: config_root.yml
+- import_tasks: install_ly.yml
   become: true
-  become_user: root
-  tags: [desktop, config, root]
+  tags: [desktop, config, ly]
+
+#- import_tasks: config_root.yml
+#  become: true
+#  become_user: root
+#  tags: [desktop, config, root]
 
 - import_tasks: config_alex.yml
   become: true

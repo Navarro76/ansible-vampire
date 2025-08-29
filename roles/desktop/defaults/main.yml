@@ -13,8 +13,8 @@ web_greeter_deb_path: "{{ role_path }}/files/web-greeter-3.5.3-debian.deb"
 desktop_packages:
   - bspwm
   - rofi
-  - lightdm
-  - lightdm-gtk-greeter
+#  - lightdm
+#  - lightdm-gtk-greeter
   - lxappearance
   - qt5ct
   - sxhkd

@@ -8,10 +8,10 @@
     depth: 1
 
 - name: Ejecutar instalador de fzf (alex)
-  shell: "~/.fzf/install --all"
+  shell: "/home/alex/.fzf/install --all"
   args:
-    chdir: "~"
-    creates: "~/.fzf.zsh"
+    chdir: /home/alex
+    creates: /home/alex/.fzf.zsh
 
 # Powerlevel10k (alex)
 

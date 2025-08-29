@@ -11,7 +11,7 @@
   user:
     name: alex
     shell: /usr/bin/zsh
-  
+
 - name: Cambiar shell a ZSH para root
   user:
     name: root

@@ -15,3 +15,30 @@
     name: "{{ common_extra_packages }}"
     state: present
     update_cache: yes
+
+# Instalar dependencia Zig
+
+- name: Descargar Zig
+  ansible.builtin.get_url:
+    url: "https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz"
+    dest: "/tmp/zig.tar.xz"
+
+- name: Crear directorio de instalación
+  ansible.builtin.file:
+    path: /usr/local/zig
+    state: directory
+    mode: '0755'
+
+- name: Extraer Zig
+  ansible.builtin.unarchive:
+    src: /tmp/zig.tar.xz
+    dest: /usr/local/zig
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Agregar Zig al PATH global
+  ansible.builtin.copy:
+    dest: /etc/profile.d/zig.sh
+    content: |
+      export PATH=$PATH:/usr/local/zig
+    mode: '0644'
