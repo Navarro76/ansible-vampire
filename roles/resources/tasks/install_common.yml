@@ -58,13 +58,29 @@
   when: fonts_usr_local_dir_stat.stat.exists
   register: local_fonts_copy_result
 
-- name: Ajustar permisos de las fuentes
+- name: Ajustar permisos de directorios de fuentes
   ansible.builtin.file:
     path: /usr/local/share/fonts
     recurse: yes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Ajustar permisos de archivos de fuentes
+  ansible.builtin.find:
+    paths: /usr/local/share/fonts
+    recurse: yes
+    file_type: file
+  register: fonts_files
+
+- name: Aplicar permisos 644 a archivos de fuentes
+  ansible.builtin.file:
+    path: "{{ item.path }}"
     owner: root
     group: root
     mode: '0644'
+  loop: "{{ fonts_files.files }}"
 
 # *** ACTUALIZAR CACHÉ DE FUENTES SOLO SI CAMBIARON FUENTES ***
 

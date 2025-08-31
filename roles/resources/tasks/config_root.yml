@@ -16,14 +16,6 @@
   when: opentype_dir_stat.stat.exists
   register: opentype_fonts_copy_result
 
-- name: Ajustar permisos de las fuentes
-  ansible.builtin.file:
-    path: /usr/share/fonts/opentype
-    recurse: yes
-    owner: root
-    group: root
-    mode: '0644'
-
 - name: Verificar que el directorio de fuentes TrueType existe
   stat:
     path: "{{ fonts_truetype }}"
@@ -39,61 +31,42 @@
   when: truetype_dir_stat.stat.exists
   register: truetype_fonts_copy_result
 
-- name: Ajustar permisos de las fuentes
+- set_fact:
+    font_dirs:
+      - /usr/share/fonts/truetype
+      - /usr/share/fonts/opentype
+
+- name: Ajustar permisos de directorios de fuentes
   ansible.builtin.file:
-    path: /usr/share/fonts/truetype
+    path: "{{ item }}"
     recurse: yes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ font_dirs }}"
+
+- name: Encontrar archivos de fuentes
+  ansible.builtin.find:
+    paths: "{{ item }}"
+    recurse: yes
+    file_type: file
+  loop: "{{ font_dirs }}"
+  register: fonts_files
+
+- name: Aplicar permisos 644 a archivos de fuentes
+  ansible.builtin.file:
+    path: "{{ item.path }}"
     owner: root
     group: root
     mode: '0644'
+  loop: "{{ fonts_files.results | map(attribute='files') | flatten }}"
 
 - name: Recargar caché de fuentes sólo si se copiaron nuevas
   ansible.builtin.command: fc-cache -f -v
   when: >
     opentype_fonts_copy_result is changed or
     truetype_fonts_copy_result is changed
-
-# *** WEB-GREETER ***
-
-- name: Asegurar que existe /usr/share/web-greeter/themes/
-  file:
-    path: /usr/share/web-greeter/themes/
-    state: directory
-    mode: '0755'
-
-- name: Verificar que el directorio de themes para web-greeter existe
-  stat:
-    path: "{{ web_greeter_themes }}"
-  register: web_greeter_themes_dir_stat
-
-- name: Copiar temas de web-greeter (dracula, gruvbox y simple) al sistema
-  ansible.posix.synchronize:
-    src: "{{ web_greeter_themes }}/"
-    dest: /usr/share/web-greeter/themes/
-    archive: true
-    recursive: true
-    delete: false
-  when: web_greeter_themes_dir_stat.stat.exists
-
-- name: Ajustar permisos a los temas
-  ansible.builtin.file:
-    path: /usr/share/web-greeter/themes
-    recurse: yes
-    owner: root
-    group: root
-    mode: '0755'
-
-- name: Verificar que el archivo de configuración de web-greeter existe
-  stat:
-    path: "{{ web_greeter_config }}"
-  register: web_greeter_config_stat
-
-- name: Copiar archivo de configuración de web-greeter
-  copy:
-    src: "{{ web_greeter_config }}"
-    dest: /etc/lightdm/web-greeter.yml
-    mode: '0644'
-  when: web_greeter_config_stat.stat.exists
 
 # *** GRUB ***
 
