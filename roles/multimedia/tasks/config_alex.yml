@@ -1,4 +1,61 @@
 ---
+# ========== PipeWire ==========
+
+# Obtener UID de alex
+- name: Obtener UID de alex
+  ansible.builtin.getent:
+    database: passwd
+    key: alex
+  register: alex_passwd
+
+- name: Configurar variable UID
+  set_fact:
+    alex_uid: "{{ alex_passwd.ansible_facts.getent_passwd.alex[1] }}"
+
+#- name: Habilitar y arrancar xdg-desktop-portal para usuario alex
+#  systemd:
+#    name: xdg-desktop-portal
+#    scope: user
+#    enabled: true
+#    state: started
+#  become: true
+#  become_user: alex
+#  environment:
+#    XDG_RUNTIME_DIR: "/run/user/{{ alex_uid }}"
+#  tags: [multimedia, audio, service]
+
+# PipeWire y WirePlumber
+- name: Habilitar y arrancar servicios de PipeWire y WirePlumber para alex
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ alex_uid }}"
+  systemd:
+    name: "{{ item }}"
+    scope: user
+    enabled: true
+    state: started
+  loop:
+    - pipewire.service
+    - pipewire-pulse.service
+    - wireplumber.service
+  tags: [multimedia, audio, config]
+
+- name: Verificar que PipeWire está activo con pactl
+  ansible.builtin.command: pactl info
+  register: pactl_info
+  changed_when: false
+#  failed_when: pactl_info.rc != 0
+  failed_when: false
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ alex_uid }}"
+  tags: [multimedia, audio, verify]
+
+- name: Mostrar servidor de audio actual
+  ansible.builtin.debug:
+    msg: "{{ pactl_info.stdout_lines | default([]) }}"
+  tags: [multimedia, audio, verify]
+
+# ========== MPD ==========
+
 - name: Establecer permisos de directorio home
   file:
     path: "~"
@@ -16,10 +73,23 @@
     dest: "~/.mpd/mpd.conf"
     mode: '0644'
 
-- name: Habilitar mpd como servicio de usuario para alex
+- name: Obtener datos de usuario alex
+  ansible.builtin.getent:
+    database: passwd
+    key: alex
+
+- name: Configurar variable UID
+  set_fact:
+    alex_uid: "{{ getent_passwd.alex[1] }}"
+
+- name: Habilitar servicio mpd para alex (systemd user)
+  become: true
+  become_user: alex
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ alex_uid }}"
   systemd:
     name: mpd.service
-    enabled: true
     scope: user
+    enabled: true
     state: started
-#    daemon_reload: true
+    daemon_reload: true

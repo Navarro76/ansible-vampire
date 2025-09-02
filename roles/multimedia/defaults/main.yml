@@ -10,3 +10,16 @@ multimedia_packages:
   - mpd
   - smplayer
   - mpc
+
+audio_packages:
+  - pipewire
+  - pipewire-pulse
+  - pipewire-audio-client-libraries
+  - wireplumber
+  - libspa-0.2-bluetooth
+  - pipewire-jack
+  - pulseaudio-utils
+  - xdg-desktop-portal
+  - rtkit
+  - pavucontrol
+
