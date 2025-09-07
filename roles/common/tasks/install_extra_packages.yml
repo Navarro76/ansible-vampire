@@ -1,0 +1,7 @@
+---
+- name: Instalar paquetes adicionales
+  apt:
+    name: "{{ common_extra_packages }}"
+    state: present
+    update_cache: yes
+

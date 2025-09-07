@@ -1,0 +1,11 @@
+---
+# Cambiar shell a ZSH
+- name: Cambiar shell a ZSH para user
+  user:
+    name: "{{ target_user }}"
+    shell: /usr/bin/zsh
+
+- name: Cambiar shell a ZSH para root
+  user:
+    name: root
+    shell: /usr/bin/zsh

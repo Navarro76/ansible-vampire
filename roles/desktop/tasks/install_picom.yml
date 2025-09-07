@@ -1,0 +1,32 @@
+---
+# ========== Dependencias para Picom ==========
+
+- name: Instalar dependencias de compilación para picom
+  apt:
+    name: "{{ picom_dependencies }}"
+    state: present
+
+# ========== Instalación de Picom ==========
+
+- name: Clonar repositorio de picom
+  git:
+    repo: https://github.com/ibhagwan/picom.git
+    dest: "{{ picom_dir }}"
+    recursive: yes
+    update: no
+
+- name: Actualizar submódulos de picom
+  command: git submodule update --init --recursive
+  args:
+    chdir: "{{ picom_dir }}"
+
+- name: Compilar e instalar picom
+  shell: |
+    meson setup build --buildtype=release
+    ninja -C build
+    ninja -C build install
+  args:
+    chdir: "{{ picom_dir }}"
+    creates: "/usr/local/bin/picom"
+  when: picom_dir is defined
+

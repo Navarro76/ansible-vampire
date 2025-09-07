@@ -1,0 +1,49 @@
+---
+#========== Fonts (/usr/local/share/fonts) ========== 
+
+# Copiar fuentes
+- name: Verificar que el directorio de fuentes existe
+  stat:
+    path: "{{ fonts_usr_local }}"
+  register: fonts_usr_local_dir_stat
+
+- name: Copiar árbol de fuentes completo
+  ansible.posix.synchronize:
+    src: "{{ fonts_usr_local }}/"
+    dest: /usr/local/share/fonts/
+    archive: true
+    recursive: true
+    delete: false
+  when: fonts_usr_local_dir_stat.stat.exists
+  register: local_fonts_copy_result
+
+# Permisos de fuentes
+- name: Ajustar permisos de directorios de fuentes
+  ansible.builtin.file:
+    path: /usr/local/share/fonts
+    recurse: yes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Ajustar permisos de archivos de fuentes
+  ansible.builtin.find:
+    paths: /usr/local/share/fonts
+    recurse: yes
+    file_type: file
+  register: fonts_files
+
+- name: Aplicar permisos 644 a archivos de fuentes
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ fonts_files.files }}"
+
+# Actualizar caché de fuentes (sólo si cambiaron fuentes)
+- name: Recargar caché de fuentes si se copiaron nuevas fuentes
+  ansible.builtin.command: fc-cache -f -v
+  when: local_fonts_copy_result is changed
+

@@ -1,17 +1,39 @@
 ---
-- name: Incluir tareas comunes
-  import_tasks: install_common.yml
-  become: true
-  tags: [resources, install]
+# ========== recursos para el sistema ==========
 
-- name: Configuración para el usuario root
-  import_tasks: config_root.yml
+- import_tasks: system_mc_skins.yml
+  become: true
+  tags: [resources, mc]
+
+- import_tasks: system_wallpapers.yml
+  become: true
+  tags: [resources, wallpapers]
+
+- import_tasks: system_fonts.yml
+  become: true
+  tags: [resources, fonts]
+
+# ========== recursos para root ==========
+
+- import_tasks: root_fonts.yml
   become: true
   become_user: root
-  tags: [resources, config, root]
+  tags: [resources, fonts]
 
-- name: Configuración para el usuario alex
-  import_tasks: config_alex.yml
+- import_tasks: root_grub.yml
   become: true
-  become_user: alex
-  tags: [resources, config, alex]
+  become_user: root
+  tags: [resources, grub]
+
+# ========== recursos para usuario ==========
+
+- import_tasks: user_wallpapers.yml
+  become: true
+#  become_user: "{{ target_user }}"
+  tags: [resources, wallpapers, user]
+
+- import_tasks: user_dracula.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [resources, dracula, user]
+

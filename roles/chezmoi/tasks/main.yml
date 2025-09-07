@@ -1,0 +1,5 @@
+---
+- import_tasks: user_chezmoi.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [chezmoi, user]

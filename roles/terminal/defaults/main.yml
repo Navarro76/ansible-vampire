@@ -6,13 +6,15 @@ tmux_config_local: "{{ terminal_files_dir }}/tmux/tmux.conf.local" # colocar . a
 bat_deb: "{{ terminal_files_dir }}/tools/bat_0.25.0_amd64.deb"
 lsd_deb: "{{ terminal_files_dir }}/tools/lsd_1.1.5_amd64.deb"
 zsh_sudo_plugin: "{{ terminal_files_dir }}/zsh-sudo/sudo.plugin.zsh"
+p10k_config: "{{ terminal_files_dir }}/p10k/p10k.zsh"
 
 terminal_packages:
   - zsh
   - locate
-  - neofetch
   - ranger
   - mc
   - kitty
   - tmux
   - acl
+  - scrot
+  - fastfetch

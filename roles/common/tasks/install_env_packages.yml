@@ -1,0 +1,7 @@
+---
+- name: Instalar dependencias de entorno
+  apt:
+    name: "{{ common_env_packages }}"
+    state: present
+    update_cache: yes
+

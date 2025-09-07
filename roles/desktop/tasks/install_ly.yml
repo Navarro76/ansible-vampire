@@ -20,37 +20,30 @@
   register: ly_install
   changed_when: "'Installed executable' in ly_install.stdout"
 
-- name: Deshabilitar y purgar LightDM y greeters si existen
-  ansible.builtin.apt:
-    name:
-      - lightdm
-      - lightdm-gtk-greeter
-      - gir1.2-lightdm-1
-      - liblightdm-gobject-1-0
-      - liblightdm-gobject-dev
-    state: absent
-    purge: yes
-
-- name: Eliminar symlink display-manager si apunta a LightDM
-  ansible.builtin.file:
-    path: /etc/systemd/system/display-manager.service
-    state: absent
-  ignore_errors: true
-
 - name: Habilitar Ly service
   ansible.builtin.systemd:
     name: ly.service
     enabled: yes
     state: started
 
-- name: Configurar PAM mínimo funcional para Ly
+- name: Configurar PAM de Ly (similar a Debian 12)
   ansible.builtin.copy:
     dest: /etc/pam.d/ly
     content: |
-      auth       required   pam_unix.so
-      account    required   pam_unix.so
-      password   required   pam_unix.so
-      session    required   pam_unix.so
+      auth       include      login
+      -auth      optional     pam_gnome_keyring.so
+      -auth      optional     pam_kwallet5.so
+
+      account    include      login
+
+      password   include      login
+      -password  optional     pam_gnome_keyring.so use_authtok
+
+      -session   optional     pam_systemd.so       class=greeter
+      -session   optional     pam_elogind.so
+      session    include      login
+      -session   optional     pam_gnome_keyring.so auto_start
+      -session   optional     pam_kwallet5.so      auto_start
     mode: '0644'
 
 - name: Deshabilitar getty@tty2 (liberar TTY2)

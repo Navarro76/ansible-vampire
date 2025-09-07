@@ -1,6 +1,21 @@
 ---
-- import_tasks: install_common.yml
-  become: true
-  tags: [common, install]
+# ========== Instalación de paquetes ==========
 
+- import_tasks: install_update.yml
+  become: true
+  tags: [common, update]
+
+- import_tasks: install_env_packages.yml
+  become: true
+  tags: [common, env]
+
+- import_tasks: install_extra_packages.yml
+  become: true
+  tags: [common, extra]
+
+- import_tasks: install_zig.yml
+  become: true
+  tags: [common, zig]
+
+# ========== Configuración de sistema ==========
 

@@ -1,0 +1,13 @@
+---
+# Neovim
+- name: Crear carpetas de configuración de Neovim
+  file:
+    path: "/root/.config/nvim"
+    state: directory
+    recurse: yes
+
+- name: Copiar init.lua
+  copy:
+    src: "{{ neovim_config }}"
+    dest: "/root/.config/nvim/init.lua"
+    mode: '0644'

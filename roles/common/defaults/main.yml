@@ -5,7 +5,7 @@ common_env_packages:
   - golang
   - git
   - vim
-  - xcb
+#  - xcb
   - libxcb-util0-dev
   - libxcb-ewmh-dev
   - libxcb-randr0-dev
@@ -18,16 +18,10 @@ common_env_packages:
 
 common_extra_packages:
   - scrot
-  - scrub
-  - zsh
   - xclip
-  - bat
-  - locate
-  - neofetch
   - wmname
   - acpi
   - xorg
   - brightnessctl
   - imagemagick
-  - ranger
-  - kitty
+  - rsync

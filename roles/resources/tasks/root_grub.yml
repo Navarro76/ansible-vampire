@@ -1,0 +1,45 @@
+---
+#========== GRUB ========== 
+
+# Copiar temas
+- name: Verificar que el directorio de temas de grub existe
+  stat:
+    path: "{{ grub_theme_dir }}"
+  register: grub_theme_dir_stat
+
+- name: Copiar tema dracula para grub
+  ansible.posix.synchronize:
+    src: "{{ grub_theme_dir }}"
+    dest: /boot/grub/themes/
+    archive: true
+    recursive: true
+    delete: false
+  when: grub_theme_dir_stat.stat.exists
+
+# Permisos a los temas
+- name: Ajustar permisos a los temas de grub
+  ansible.builtin.file:
+    path: /boot/grub/themes
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0755'
+
+# Copiar archivo de configuración
+- name: Verificar que el archivo de configuración de grub existe
+  stat:
+    path: "{{ grub_config }}"
+  register: grub_config_stat
+
+- name: Copiar archivo de configuración de grub
+  copy:
+    src: "{{ grub_config }}"
+    dest: /etc/default/grub
+    mode: '0644'
+    remote_src: false
+  when: grub_config_stat.stat.exists
+
+# Regenerar configuración grub
+- name: Regenerar configuración grub
+  command: grub-mkconfig -o /boot/grub/grub.cfg
+

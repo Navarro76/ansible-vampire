@@ -1,0 +1,34 @@
+---
+#========== Estilos dracula (temas, iconos y cursores) ========== 
+
+- name: Crear directorio ~/.themes si no existe
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.themes"
+    state: directory
+    mode: '0755'
+
+- name: Extraer y mover tema Dracula (lxappearance)
+  unarchive:
+    src: "{{ lxappearance_themes_zip }}"
+    dest: "/home/{{ target_user }}/.themes/"
+    remote_src: false
+
+- name: Renombrar carpeta gtk-master a dracula
+  command: mv "/home/{{ target_user }}/.themes/gtk-master" "/home/{{ target_user }}/.themes/dracula"
+  args:
+    creates: "/home/{{ target_user }}/.themes/dracula"
+
+- name: Crear directorio ~/.icons si no existe
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.icons"
+    state: directory
+    mode: '0755'
+
+- name: Extraer y mover iconos y cursores Dracula (extrae todo tipo .zip y .tar)
+  unarchive:
+    src: "{{ item }}"
+    dest: "/home/{{ target_user }}/.icons/"
+    remote_src: false
+  with_fileglob:
+    - "{{ lxappearance_icons }}/*.zip"
+    - "{{ lxappearance_icons }}/*.tar.xz"

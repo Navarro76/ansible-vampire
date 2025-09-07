@@ -1,23 +1,4 @@
 ---
-- name: Actualizar el sistema
-  apt:
-    update_cache: yes
-    upgrade: dist
-
-- name: Instalar dependencias de entorno
-  apt:
-    name: "{{ common_env_packages }}"
-    state: present
-    update_cache: yes
-
-- name: Instalar paquetes adicionales
-  apt:
-    name: "{{ common_extra_packages }}"
-    state: present
-    update_cache: yes
-
-# Instalar dependencia Zig
-
 - name: Descargar Zig
   ansible.builtin.get_url:
     url: "https://ziglang.org/download/0.15.1/zig-x86_64-linux-0.15.1.tar.xz"
@@ -42,3 +23,4 @@
     content: |
       export PATH=$PATH:/usr/local/zig
     mode: '0644'
+

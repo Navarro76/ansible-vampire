@@ -1,5 +1,4 @@
 ---
-
 # Ruta base para clonar repos desde GitHub
 github_dir: "/home/{{ ansible_user_id }}/github"
 
@@ -13,12 +12,12 @@ web_greeter_deb_path: "{{ role_path }}/files/web-greeter-3.5.3-debian.deb"
 desktop_packages:
   - bspwm
   - rofi
-#  - lightdm
-#  - lightdm-gtk-greeter
   - lxappearance
   - qt5ct
   - sxhkd
   - feh
+  - picom
+  - picom-conf
 
 polybar_dependencies:
   - cmake
@@ -48,6 +47,8 @@ polybar_dependencies:
 
 picom_dependencies:
   - meson
+  - ninja-build
+  - pkg-config
   - libxext-dev
   - libxcb1-dev
   - libxcb-damage0-dev
@@ -58,18 +59,16 @@ picom_dependencies:
   - libxcb-composite0-dev
   - libxcb-image0-dev
   - libxcb-present-dev
-  - libxcb-xinerama0-dev
+  - libxcb-randr0-dev
+  - libxcb-util-dev
+  - libxcb-glx0-dev
   - libpixman-1-dev
   - libdbus-1-dev
   - libconfig-dev
-  - libgl1-mesa-dev
+  - libgl-dev
+  - libegl-dev
+  - libepoxy-dev
   - libpcre2-dev
-  - libevdev-dev
-  - uthash-dev
   - libev-dev
+  - uthash-dev
   - libx11-xcb-dev
-  - libxcb-glx0-dev
-  - libpcre3
-  - libpcre3-dev
-
-

@@ -1,18 +1,28 @@
 ---
-- import_tasks: install_common.yml
-  become: true
-  tags: [desktop, install]
+# ========== Instalación de paquetes ==========
 
+# Paquetes base para desktop
+- import_tasks: install_desktop_packages.yml
+  become: true
+  tags: [desktop, install, base]
+
+# Polybar
+- import_tasks: install_polybar.yml
+  become: true
+  tags: [desktop, polybar]
+
+# Picom
+#- import_tasks: install_picom.yml
+#  become: true
+#  tags: [desktop, picom]
+
+# Gestor de login
 - import_tasks: install_ly.yml
   become: true
-  tags: [desktop, config, ly]
+  tags: [desktop, ly]
 
-#- import_tasks: config_root.yml
-#  become: true
-#  become_user: root
-#  tags: [desktop, config, root]
+# ========== Configuración de sistema ==========
 
-- import_tasks: config_alex.yml
-  become: true
-  become_user: alex
-  tags: [desktop, config, alex]
+# ========== Configuración root ==========
+
+# ========== Configuración usuario ==========
