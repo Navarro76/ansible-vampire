@@ -1,5 +1,0 @@
----
-- name: Instalar dependencias para scripts (incluye compresión con upx)
-  apt:
-    name: upx-ucl
-    state: present

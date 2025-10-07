@@ -1,8 +1,0 @@
----
-# Paquetes para desktop
-- name: Instalar entorno de escritorio y gestor de ventanas
-  apt:
-    name: "{{ desktop_packages }}"
-    state: present
-    update_cache: yes
-

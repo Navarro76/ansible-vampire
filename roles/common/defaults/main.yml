@@ -5,23 +5,15 @@ common_env_packages:
   - golang
   - git
   - vim
-#  - xcb
-  - libxcb-util0-dev
-  - libxcb-ewmh-dev
-  - libxcb-randr0-dev
-  - libxcb-icccm4-dev
-  - libxcb-keysyms1-dev
-  - libxcb-xinerama0-dev
   - libasound2-dev
-  - libxcb-xtest0-dev
-  - libxcb-shape0-dev
 
 common_extra_packages:
-  - scrot
-  - xclip
-  - wmname
-  - acpi
-  - xorg
   - brightnessctl
   - imagemagick
   - rsync
+  - acpi
+  - grim
+  - slurp
+  - wl-clipboard
+  - swappy
+  - xwayland

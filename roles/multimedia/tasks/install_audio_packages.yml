@@ -1,9 +1,0 @@
----
-- name: Instalar paquetes audio
-  apt:
-    name: "{{ audio_packages }}"
-    state: present
-    update_cache: true
-    install_recommends: false  # Opcional, evita instalar sugerencias automáticas
-  tags: multimedia
-

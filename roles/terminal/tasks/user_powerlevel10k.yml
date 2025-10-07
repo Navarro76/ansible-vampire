@@ -1,7 +1,0 @@
----
-# Powerlevel10k (user)
-- name: Clonar powerlevel10k
-  git:
-    repo: https://github.com/romkatv/powerlevel10k.git
-    dest: "/home/{{ target_user }}/.powerlevel10k"
-    depth: 1

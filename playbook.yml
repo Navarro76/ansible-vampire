@@ -10,21 +10,21 @@
     - role: common
       tags: [common]
 
-    - role: desktop
-      tags: [desktop]
+#    - role: desktop
+#      tags: [desktop]
 
-    - role: terminal
-      tags: [terminal]
+#    - role: terminal
+#      tags: [terminal]
 
-    - role: multimedia
-      tags: [multimedia]
+#    - role: multimedia
+#      tags: [multimedia]
 
-    - role: resources
-      tags: [resources]
+#    - role: resources
+#      tags: [resources]
 
-    - role: scripts
-      tags: [scripts]
+#    - role: scripts
+#      tags: [scripts]
 
-    - role: chezmoi
-      tags: [chezmoi]
+#    - role: chezmoi
+#      tags: [chezmoi]
 
