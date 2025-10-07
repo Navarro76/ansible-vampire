@@ -10,8 +10,8 @@
     - role: common
       tags: [common]
 
-#    - role: desktop
-#      tags: [desktop]
+    - role: desktop
+      tags: [desktop]
 
 #    - role: terminal
 #      tags: [terminal]

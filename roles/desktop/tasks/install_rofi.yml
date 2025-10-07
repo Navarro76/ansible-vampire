@@ -1,0 +1,39 @@
+---
+# ========== Dependencias de compilación para rofi ==========
+- name: Instalar dependencias de compilación para rofi
+  apt:
+    name: "{{ rofi_dependencies }}"
+    state: present
+    update_cache: yes
+
+
+# ========== Dependencias específicas de rofi ==========
+- name: Instalar dependencias específicas de rofi (build-dep)
+  ansible.builtin.apt:
+    name: rofi
+    state: build-dep
+
+# ========== Dependencias específicas para Wayland ==========
+- name: Instalar dependencias específicas para Wayland
+  apt:
+    name: "{{ wayland_dependencies }}"
+    state: present
+    update_cache: yes
+
+# ========== Instalación de Rofi ==========
+
+- name: Clonar el repositorio de rofi
+  ansible.builtin.git:
+    repo: 'https://github.com/davatorium/rofi.git'
+    dest: /tmp/rofi-source
+    version: next
+    force: yes  # Esto asegura que siempre tenga la versión más reciente
+
+- name: Configurar, compilar e instalar rofi con soporte Wayland
+  ansible.builtin.shell:
+    cmd: |
+      cd /tmp/rofi-source
+      meson setup build -Dxcb=disabled
+      ninja -C build
+      ninja -C build install
+    creates: /usr/local/bin/rofi

@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  author: Alex Navarro
+  description: Rol para instalar un entorno gráfico mínimo basado en un gestor de ventanas tipo tiling (bspwm, sxhkd, etc.)
+  company: "Personal"  
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - desktop
+    - bspwm
+    - window-manager
+    - lightdm
+    - polybar
+    - rofi
+    - picom
+    - tiling-wm
+
+dependencies: []

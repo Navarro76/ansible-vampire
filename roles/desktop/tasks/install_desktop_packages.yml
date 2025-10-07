@@ -1,0 +1,19 @@
+---
+# Paquetes para desktop
+- name: Instalar entorno de escritorio y gestor de ventanas
+  apt:
+    name: "{{ desktop_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Crear directorio de configuración de Sway para usuario alex
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.config/sway"
+    state: directory
+    mode: '0755'
+
+- name: Copiar configuración básica de Sway para usuario alex
+  ansible.builtin.copy:
+    src: /etc/sway/config
+    dest: /home/{{ target_user }}/.config/sway/config
+    mode: '0644'

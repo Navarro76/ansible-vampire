@@ -1,0 +1,23 @@
+---
+# ========== Instalación de paquetes ==========
+
+# Paquetes base para desktop
+- import_tasks: install_desktop_packages.yml
+  become: true
+  tags: [desktop, install, base]
+
+# Rofi
+- import_tasks: install_rofi.yml
+  become: true
+  tags: [desktop, rofi]
+
+# Gestor de login
+- import_tasks: install_ly.yml
+  become: true
+  tags: [desktop, ly]
+
+# ========== Configuración de sistema ==========
+
+# ========== Configuración root ==========
+
+# ========== Configuración usuario ==========
