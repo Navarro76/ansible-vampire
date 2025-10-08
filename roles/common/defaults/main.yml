@@ -17,3 +17,4 @@ common_extra_packages:
   - wl-clipboard
   - swappy
   - xwayland
+  - acl

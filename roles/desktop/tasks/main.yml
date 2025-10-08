@@ -6,6 +6,12 @@
   become: true
   tags: [desktop, install, base]
 
+# Configuración básica para sway
+- import_tasks: user_sway_config.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [desktop, config, sway]
+
 # Rofi
 - import_tasks: install_rofi.yml
   become: true
