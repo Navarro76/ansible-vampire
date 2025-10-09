@@ -1,0 +1,15 @@
+---
+# ========== xdg-desktop-portal ==========
+# Si migras a Wayland, considera habilitar manualmente xdg-desktop-portal como servicio de usuario.
+- name: Habilitar y arrancar xdg-desktop-portal para usuario
+  systemd:
+    name: xdg-desktop-portal
+    scope: user
+    enabled: true
+    state: started
+  become: true
+  become_user: "{{ target_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+  tags: [multimedia, audio, service]
+

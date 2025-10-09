@@ -1,0 +1,34 @@
+---
+# ========== Instalación de paquetes ==========
+
+- import_tasks: install_multimedia_packages.yml
+  become: true
+  tags: [multimedia, install]
+
+- import_tasks: install_audio_packages.yml
+  become: true
+  tags: [multimedia, install, audio]
+
+# ========== Configuración de root ==========
+
+- import_tasks: root_rtkit.yml
+  become: true
+  become_user: root
+  tags: [multimedia, config, root, rtkit]
+
+- import_tasks: root_mpd.yml
+  become: true
+  become_user: root
+  tags: [multimedia, config, root, mpd]
+
+# ========== Configuración de usuario ==========
+
+- import_tasks: user_pipewire.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [multimedia, config, user, pipewire]
+
+- import_tasks: user_mpd.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [multimedia, config, user, mpd]

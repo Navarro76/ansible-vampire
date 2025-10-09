@@ -16,8 +16,8 @@
     - role: terminal
       tags: [terminal]
 
-#    - role: multimedia
-#      tags: [multimedia]
+    - role: multimedia
+      tags: [multimedia]
 
 #    - role: resources
 #      tags: [resources]
