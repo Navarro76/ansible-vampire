@@ -1,0 +1,39 @@
+---
+# ========== recursos para el sistema ==========
+
+- import_tasks: system_mc_skins.yml
+  become: true
+  tags: [resources, mc]
+
+- import_tasks: system_wallpapers.yml
+  become: true
+  tags: [resources, wallpapers]
+
+- import_tasks: system_fonts.yml
+  become: true
+  tags: [resources, fonts]
+
+# ========== recursos para root ==========
+
+- import_tasks: root_fonts.yml
+  become: true
+  become_user: root
+  tags: [resources, fonts]
+
+- import_tasks: root_grub.yml
+  become: true
+  become_user: root
+  tags: [resources, grub]
+
+# ========== recursos para usuario ==========
+
+- import_tasks: user_wallpapers.yml
+  become: true
+#  become_user: "{{ target_user }}"
+  tags: [resources, wallpapers, user]
+
+- import_tasks: user_dracula.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [resources, dracula, user]
+

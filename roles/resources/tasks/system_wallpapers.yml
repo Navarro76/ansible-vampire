@@ -1,0 +1,17 @@
+---
+# ========== Wallpapers ==========
+
+- name: Verificar que el directorio de wallpapers existe
+  stat:
+    path: "{{ wallpapers }}"
+  register: wallpapers_dir_stat
+
+- name: Copiar wallpapers al sistema
+  copy:
+    src: "{{ item }}"
+    dest: /usr/share/backgrounds/
+    mode: '0644'
+  with_fileglob:
+    - "{{ wallpapers }}/*"
+  when: wallpapers_dir_stat.stat.exists
+

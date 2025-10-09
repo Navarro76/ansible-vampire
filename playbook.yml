@@ -19,8 +19,8 @@
     - role: multimedia
       tags: [multimedia]
 
-#    - role: resources
-#      tags: [resources]
+    - role: resources
+      tags: [resources]
 
 #    - role: scripts
 #      tags: [scripts]
