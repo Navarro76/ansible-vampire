@@ -1,0 +1,8 @@
+---
+# Instalación de paquetes para la terminal 
+- name: Instalar paquetes base
+  apt:
+    name: "{{ terminal_packages }}"
+    state: present
+    update_cache: true
+

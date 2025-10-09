@@ -1,0 +1,46 @@
+---
+# Oh My Tmux
+- name: Clonar Oh My Tmux
+  git:
+    repo: https://github.com/gpakosz/.tmux.git
+    dest: "/root/.tmux"
+    depth: 1
+
+- name: Enlazar .tmux.conf
+  file:
+    src: "/root/.tmux/.tmux.conf"
+    dest: "/root/.tmux.conf"
+    state: link
+    force: true
+
+- name: Copiar tmux.conf.local
+  copy:
+    src: "{{ tmux_config_local }}"
+    dest: "/root/.tmux.conf.local"
+    mode: '0644'
+
+# Tema Dracula
+- name: Clonar Dracula OMT
+  git:
+    repo: https://github.com/atgmello/dracula.omt.git
+    dest: "/root/dracula.omt"
+    depth: 1
+
+- name: Crear carpeta de temas Dracula
+  file:
+    path: "/root/.config/oh-my-tmux/themes"
+    state: directory
+    recurse: true
+
+- name: Enlazar dracula.conf
+  file:
+    src: "/root/dracula.omt/dracula.conf"
+    dest: "/root/.config/oh-my-tmux/themes/dracula.conf"
+    state: link
+    force: true
+
+# Reiniciar servidor de tmux
+- name: Reiniciar servidor de tmux
+  shell: tmux kill-server || true
+  become: false
+  tags: [optional]

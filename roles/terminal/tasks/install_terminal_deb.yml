@@ -1,0 +1,28 @@
+---
+# ========== Instalación de lsd ==========
+
+- name: Verificar si lsd está instalado
+  command:
+    cmd: dpkg-query -W lsd
+  register: lsd_installed
+  changed_when: false
+  ignore_errors: yes
+
+- name: Instalar lsd desde .deb
+  apt:
+    deb: "{{ lsd_deb }}"
+  when: not ansible_check_mode and lsd_installed.rc != 0
+
+# ========== Instalación de bat ==========
+
+- name: Verificar si bat está instalado
+  command:
+    cmd: dpkg-query -W bat
+  register: bat_installed
+  changed_when: false
+  ignore_errors: yes
+
+- name: Instalar bat desde .deb
+  apt:
+    deb: "{{ bat_deb }}"
+  when: not ansible_check_mode and bat_installed.rc != 0

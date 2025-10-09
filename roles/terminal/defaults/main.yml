@@ -1,0 +1,21 @@
+---
+terminal_files_dir: "{{ role_path }}/files"
+neovim_appimage: "{{ terminal_files_dir }}/neovim/nvim-linux-x86_64.appimage"
+neovim_config: "{{ terminal_files_dir }}/neovim/init.lua"
+tmux_config_local: "{{ terminal_files_dir }}/tmux/tmux.conf.local" # colocar . al archivo
+bat_deb: "{{ terminal_files_dir }}/tools/bat_0.25.0_amd64.deb"
+lsd_deb: "{{ terminal_files_dir }}/tools/lsd_1.1.5_amd64.deb"
+zsh_sudo_plugin: "{{ terminal_files_dir }}/zsh-sudo/sudo.plugin.zsh"
+p10k_config: "{{ terminal_files_dir }}/p10k/p10k.zsh"
+
+terminal_packages:
+  - zsh
+  - locate
+  - ranger
+  - mc
+  - foot
+  - kitty
+  - tmux
+  - acl
+  - scrot
+  - fastfetch

@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Alex Navarro
+  description: Configura un entorno terminal completo (zsh, tmux, neovim, etc.)
+  license: MIT
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+  min_ansible_version: "2.10"
+

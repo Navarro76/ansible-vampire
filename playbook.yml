@@ -13,8 +13,8 @@
     - role: desktop
       tags: [desktop]
 
-#    - role: terminal
-#      tags: [terminal]
+    - role: terminal
+      tags: [terminal]
 
 #    - role: multimedia
 #      tags: [multimedia]
