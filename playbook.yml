@@ -22,8 +22,8 @@
     - role: resources
       tags: [resources]
 
-#    - role: scripts
-#      tags: [scripts]
+    - role: scripts
+      tags: [scripts]
 
 #    - role: chezmoi
 #      tags: [chezmoi]

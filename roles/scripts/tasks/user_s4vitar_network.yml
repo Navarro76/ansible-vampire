@@ -1,0 +1,18 @@
+---
+# Copiar scripts
+- name: Copiar scripts del directorio bin a ~/.config/bin/
+  copy:
+    src: "{{ bin_scripts }}"
+    dest: "/home/{{ target_user }}/.config/"
+    mode: '0755'
+
+# Asignar permisos a los scripts
+- name: Asignar permisos a scripts específicos del usuario alex
+  file:
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "/home/{{ target_user }}/.config/bin/ethernet_status.sh"
+    - "/home/{{ target_user }}/.config/bin/htb_status.sh"
+    - "/home/{{ target_user }}/.config/bin/htb_target.sh"
+

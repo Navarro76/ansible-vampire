@@ -1,0 +1,53 @@
+---
+# ========== whichSystem y screenshot ==========
+
+- name: Copiar whichSystem.py a /usr/local/bin/
+  copy:
+    src: "{{ hacker_whichSystem }}"
+    dest: "/usr/local/bin/whichSystem.py"
+    mode: '0755'
+
+- name: Copiar screenshot a /usr/local/bin/
+  copy:
+    src: "{{ hacker_screenshot }}"
+    dest: "/usr/local/bin/screenshot"
+    mode: '0755'
+
+- name: Asignar permisos a scripts específicos
+  file:
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "/usr/local/bin/whichSystem.py"
+    - "/usr/local/bin/screenshot"
+
+# ========== fastTCPScan ==========
+
+- name: Copiar fastTCPScan.go a /tmp
+  copy:
+    src: "{{ hacker_fastTCPScan }}"
+    dest: "/tmp/fastTCPScan.go"
+    mode: '0644'
+
+- name: Compilar fastTCPScan.go en /tmp y mover a /usr/bin/
+  command: go build -ldflags "-s -w" -o /usr/bin/fastTCPScan /tmp/fastTCPScan.go
+  args:
+    creates: /usr/bin/fastTCPScan
+
+- name: Verificar si upx está disponible
+  stat:
+    path: /usr/bin/upx
+  register: upx_check
+
+#- name: Comprimir fastTCPScan con upx (si está disponible)
+#  command: upx --best /usr/bin/fastTCPScan
+#  when: upx_check.stat.exists
+
+- name: Comprimir fastTCPScan con upx (si está disponible)
+  command: >
+    upx --best /usr/bin/fastTCPScan
+  register: upx_result
+  failed_when: >
+    upx_result.rc != 0 and
+    ('AlreadyPackedException' not in upx_result.stderr)
+

@@ -1,0 +1,18 @@
+---
+# ========== Scripts comunes ==========
+
+- import_tasks: install_upx.yml
+  become: true
+  tags: [scripts, install, upx]
+
+- import_tasks: common_s4vitar_hacker.yml
+  become: true
+  tags: [scripts, install]
+
+# ========== Scripts para usuario ==========
+
+- import_tasks: user_s4vitar_network.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [scripts, install, user]
+
