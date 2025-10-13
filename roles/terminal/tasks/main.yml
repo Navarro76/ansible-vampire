@@ -34,10 +34,15 @@
   become_user: root
   tags: [terminal, root, neovim]
 
-- import_tasks: root_powerlevel10k.yml
+#- import_tasks: root_powerlevel10k.yml
+#  become: true
+#  become_user: root
+#  tags: [terminal, root, p10k]
+
+- import_tasks: root_ohmyposh.yml
   become: true
   become_user: root
-  tags: [terminal, root, p10k]
+  tags: [terminal, root, ohmyposh]
 
 - import_tasks: root_ohmytmux.yml
   become: true
@@ -56,10 +61,15 @@
   become_user: "{{ target_user }}"
   tags: [terminal, user, neovim]
 
-- import_tasks: user_powerlevel10k.yml
+#- import_tasks: user_powerlevel10k.yml
+#  become: true
+#  become_user: "{{ target_user }}"
+#  tags: [terminal, user, p10k]
+
+- import_tasks: user_ohmyposh_themes.yml
   become: true
   become_user: "{{ target_user }}"
-  tags: [terminal, user, p10k]
+  tags: [terminal, user, ohmyposh_themes]
 
 - import_tasks: user_ohmytmux.yml
   become: true

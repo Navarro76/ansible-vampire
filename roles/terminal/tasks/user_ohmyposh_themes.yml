@@ -1,0 +1,24 @@
+---
+# ========== Temas de Oh My Posh ==========
+
+- name: Crear directorio para temas en el home del usuario
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.poshthemes"
+    state: directory
+    recurse: yes
+
+- name: Descargar archivo comprimido de temas
+  ansible.builtin.get_url:
+    url: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip
+    dest: "/home/{{ target_user }}/.poshthemes/themes.zip"
+
+- name: Descomprimir temas
+  ansible.builtin.unarchive:
+    src: "/home/{{ target_user }}/.poshthemes/themes.zip"
+    dest: "/home/{{ target_user }}/.poshthemes/"
+    remote_src: yes
+
+- name: Eliminar archivo comprimido de temas
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.poshthemes/themes.zip"
+    state: absent

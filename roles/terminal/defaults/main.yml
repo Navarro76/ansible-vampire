@@ -14,6 +14,7 @@ terminal_packages:
   - ranger
   - mc
   - foot
+  - foot-themes
   - kitty
   - tmux
   - acl
