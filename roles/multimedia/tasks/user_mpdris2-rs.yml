@@ -1,0 +1,56 @@
+---
+
+# ========== Servicio mpdris2-rs ==========
+
+- name: Crear directorio systemd user si no existe
+  ansible.builtin.file:
+    path: "~/.config/systemd/user"
+    state: directory
+    mode: '0755'
+
+- name: Recrear el archivo de servicio mpdris2-rs con sintaxis corregida
+  ansible.builtin.copy:
+    dest: "~/.config/systemd/user/mpdris2-rs.service"
+    content: |
+      [Unit]
+      Description=Music Player Daemon D-Bus Bridge
+      After=mpd.service
+      Wants=mpd.service
+
+      [Service]
+      Type=exec
+      ExecStart=/usr/local/bin/mpdris2-rs
+      Restart=on-failure
+      RestartSec=3
+
+      [Install]
+      WantedBy=default.target
+    mode: '0644'
+  register: service_file_created
+
+# ========== Habiliar y arrancar servicios ==========
+
+- name: Obtener UID de user (si no está definido)
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ target_user }}"
+  register: user_passwd
+
+- name: Configurar variable UID
+  set_fact:
+    user_uid: "{{ user_passwd.ansible_facts.getent_passwd[target_user][1] }}"
+
+- name: Habilitar e iniciar servicio mpdris2-rs para el user
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+  ansible.builtin.systemd:
+    name: mpdris2-rs.service
+    scope: user
+    enabled: true
+    state: started
+    daemon_reload: true
+
+
+
+
+

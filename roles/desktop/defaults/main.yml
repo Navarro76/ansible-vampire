@@ -18,7 +18,9 @@ desktop_packages:
   - swayimg
   - papersway
   - waybar
+  - cava
   - gammastep
+  - jq
 
 rofi_dependencies:
   - build-essential
@@ -31,3 +33,4 @@ wayland_dependencies:
   - wayland-protocols
   - libwayland-dev
   - libpango1.0-dev
+

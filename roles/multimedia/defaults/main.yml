@@ -26,3 +26,5 @@ audio_packages:
   - xdg-desktop-portal
   - xdg-desktop-portal-wlr
   - xdg-desktop-portal-gtk
+  - libplayerctl-dev
+  - playerctl

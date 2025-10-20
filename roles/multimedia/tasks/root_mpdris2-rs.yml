@@ -1,0 +1,28 @@
+---
+# ========== Instalación de mpdris2-rs ==========
+
+- name: Clonar repositorio mpdris2-rs
+  ansible.builtin.git:
+    repo: "https://github.com/szclsya/mpdris2-rs"
+    dest: "/tmp/mpdris2-rs"
+    version: trunk
+
+- name: Compilar mpdris2-rs en modo release
+  ansible.builtin.command:
+    cmd: cargo build --release
+    chdir: "/tmp/mpdris2-rs"
+
+- name: Crear directorio /usr/local/bin si no existe
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/bin
+    state: directory
+    mode: '0755'
+
+- name: Copiar binario mpdris2-rs a /usr/local/bin
+  become: true
+  ansible.builtin.copy:
+    src: "/tmp/mpdris2-rs/target/release/mpdris2-rs"
+    dest: /usr/local/bin/mpdris2-rs
+    mode: '0755'
+    remote_src: true

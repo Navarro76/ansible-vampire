@@ -1,6 +1,7 @@
 ---
 common_env_packages:
   - build-essential
+  - cargo
   - libpam0g-dev
   - golang
   - git
