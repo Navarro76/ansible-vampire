@@ -29,3 +29,4 @@
 
 - name: Habilitar linger para user
   command: loginctl enable-linger "{{ target_user }}"
+  tags: [multimedia, config, root, linger]

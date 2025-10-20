@@ -4,24 +4,32 @@
 
 - name: Crear directorio systemd user si no existe
   ansible.builtin.file:
-    path: "~/.config/systemd/user"
+    path: "/home/{{ target_user }}/.config/systemd/user"
     state: directory
     mode: '0755'
 
 - name: Recrear el archivo de servicio mpdris2-rs con sintaxis corregida
   ansible.builtin.copy:
-    dest: "~/.config/systemd/user/mpdris2-rs.service"
+    dest: "/home/{{ target_user }}/.config/systemd/user/mpdris2-rs.service"
     content: |
       [Unit]
-      Description=Music Player Daemon D-Bus Bridge
+      Description=MPRIS2 Bridge for MPD (Rust implementation)
       After=mpd.service
+      After=dbus.socket
       Wants=mpd.service
+      # Esperar explícitamente a que la sesión D-Bus esté lista
+      Requires=dbus.socket
 
       [Service]
-      Type=exec
+      Type=simple
       ExecStart=/usr/local/bin/mpdris2-rs
       Restart=on-failure
-      RestartSec=3
+      RestartSec=5
+      # Esperar a que D-Bus esté completamente inicializado
+      ExecStartPre=/bin/sleep 5
+      # Variables críticas para D-Bus
+      Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus"
+      Environment="XDG_RUNTIME_DIR=/run/user/%U"
 
       [Install]
       WantedBy=default.target
@@ -47,7 +55,7 @@
     name: mpdris2-rs.service
     scope: user
     enabled: true
-    state: started
+    state: restarted
     daemon_reload: true
 
 
