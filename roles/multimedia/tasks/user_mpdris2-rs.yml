@@ -2,6 +2,19 @@
 
 # ========== Servicio mpdris2-rs ==========
 
+- name: Crear script wrapper minimalista para mpdris2-rs
+  ansible.builtin.copy:
+    dest: "/home/{{ target_user }}/.config/bin/mpdris2-rs-wrapper.sh"
+    content: |
+      #!/bin/bash
+      # Esperar a que D-Bus esté disponible
+      while [ ! -S "/run/user/$(id -u)/bus" ]; do
+          sleep 1
+      done
+      export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+      exec /usr/local/bin/mpdris2-rs "$@"
+    mode: '0755'
+
 - name: Crear directorio systemd user si no existe
   ansible.builtin.file:
     path: "/home/{{ target_user }}/.config/systemd/user"
@@ -17,22 +30,18 @@
       After=mpd.service
       After=dbus.socket
       Wants=mpd.service
-      # Esperar explícitamente a que la sesión D-Bus esté lista
       Requires=dbus.socket
 
       [Service]
       Type=simple
-      ExecStart=/usr/local/bin/mpdris2-rs
-      Restart=on-failure
-      RestartSec=5
-      # Esperar a que D-Bus esté completamente inicializado
-      ExecStartPre=/bin/sleep 5
-      # Variables críticas para D-Bus
-      Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus"
-      Environment="XDG_RUNTIME_DIR=/run/user/%U"
+      ExecStart=/home/{{ target_user }}/.config/bin/mpdris2-rs-wrapper.sh
+      Restart=always
+      RestartSec=10
+      # Agregar timeout de inicio más largo
+      TimeoutStartSec=10
 
       [Install]
-      WantedBy=default.target
+      WantedBy=multi-user.target
     mode: '0644'
   register: service_file_created
 
@@ -57,8 +66,3 @@
     enabled: true
     state: restarted
     daemon_reload: true
-
-
-
-
-
