@@ -1,0 +1,53 @@
+---
+# ========== Cavacore ==========
+
+- name: Instalar dependencias de cavacore
+  apt:
+    name: "{{ cavacore_dependencies }}"
+    state: present
+    update_cache: yes
+
+- name: Crear directorio temporal para compilación
+  tempfile:
+    state: directory
+    suffix: cavacore_build
+  register: build_dir
+
+- name: Clonar repositorio de cava
+  git:
+    repo: "https://github.com/LukashonakV/cava.git"
+    dest: "{{ build_dir.path }}/cava"
+    version: master
+    force: yes
+
+- name: Configurar build de cavacore
+  command:
+    cmd: meson setup build
+    chdir: "{{ build_dir.path }}/cava"
+
+- name: Compilar cavacore
+  command:
+    cmd: meson compile -C build
+    chdir: "{{ build_dir.path }}/cava"
+
+- name: Instalar cavacore
+  command:
+    cmd: meson install -C build
+    chdir: "{{ build_dir.path }}/cava"
+
+- name: Actualizar cache de librerías
+  command: ldconfig
+
+- name: Verificar instalación de libcava
+  command: find /usr -name "libcava.so*"
+  register: libcava_check
+  changed_when: false
+
+- name: Mostrar resultado de verificación
+  debug:
+    msg: "libcava instalada en: {{ libcava_check.stdout }}"
+
+- name: Limpiar directorio temporal
+  file:
+    path: "{{ build_dir.path }}"
+    state: absent

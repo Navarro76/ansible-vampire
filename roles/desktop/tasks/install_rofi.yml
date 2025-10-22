@@ -1,11 +1,4 @@
 ---
-# ========== Dependencias de compilación para rofi ==========
-- name: Instalar dependencias de compilación para rofi
-  apt:
-    name: "{{ rofi_dependencies }}"
-    state: present
-    update_cache: yes
-
 
 # ========== Dependencias específicas de rofi ==========
 - name: Instalar dependencias específicas de rofi (build-dep)

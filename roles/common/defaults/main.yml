@@ -2,9 +2,15 @@
 common_env_packages:
   - build-essential
   - cargo
+  - automake
+  - cmake
+  - meson
+  - ninja-build
+  - pkg-config
+  - pkgconf
+  - git
   - libpam0g-dev
   - golang
-  - git
   - vim
   - libasound2-dev
 

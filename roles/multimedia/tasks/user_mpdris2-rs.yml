@@ -12,8 +12,14 @@
           sleep 1
       done
       export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+
+      # Detener reproducción automática
+      mpc stop >/dev/null 2>&1
+
+      # Iniciar mpdris2-rs
       exec /usr/local/bin/mpdris2-rs "$@"
     mode: '0755'
+  tags: wrapper
 
 - name: Crear directorio systemd user si no existe
   ansible.builtin.file:

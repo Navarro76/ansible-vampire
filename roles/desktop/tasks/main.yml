@@ -6,6 +6,11 @@
   become: true
   tags: [desktop, install, base]
 
+# cavacore
+- import_tasks: install_cavacore.yml
+  become: true
+  tags: [desktop, install, cavacore]
+
 # Configuración básica para sway
 - import_tasks: user_sway_config.yml
   become: true
