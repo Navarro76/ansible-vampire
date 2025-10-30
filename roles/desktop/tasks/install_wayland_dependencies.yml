@@ -1,0 +1,7 @@
+---
+# Instalar dependencias de Wayland
+- name: Instalar dependencias de Wayland
+  apt:
+    name: "{{ wayland_dependencies }}"
+    state: present
+    update_cache: yes

@@ -6,10 +6,10 @@
   become: true
   tags: [desktop, install, base]
 
-# cavacore
-- import_tasks: install_cavacore.yml
+# Dependencias de wayland
+- import_tasks: install_wayland_dependencies.yml
   become: true
-  tags: [desktop, install, cavacore]
+  tags: [desktop, install, wayland]
 
 # Configuración básica para sway
 - import_tasks: user_sway_config.yml

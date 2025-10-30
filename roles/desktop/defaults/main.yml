@@ -20,43 +20,15 @@ desktop_packages:
   - xdg-desktop-portal-wlr
   - swayimg
   - papersway
+  - waybar
   - cava
   - gammastep
   - jq
-
-cavacore_dependencies:
-  - libfftw3-dev
-  - libasound2-dev
-  - libpulse-dev
-  - libiniparser-dev
-  - libpipewire-0.3-dev
-  - libjack-jackd2-dev
-  - libsdl2-dev
-  - libtool
+  - waybar
+  - libnotify-bin
+  - nwg-look
 
 wayland_dependencies:
   - wayland-protocols
   - libwayland-dev
   - libpango1.0-dev
-
-waybar_dependencies:
-  - clang-tidy
-  - gobject-introspection
-  - libdbusmenu-gtk3-dev
-  - libevdev-dev
-  - libfmt-dev
-  - libgirepository1.0-dev
-  - libgtk-3-dev
-  - libgtkmm-3.0-dev
-  - libinput-dev
-  - libjsoncpp-dev
-  - libmpdclient-dev
-  - libnl-3-dev
-  - libnl-genl-3-dev
-  - libpulse-dev
-  - libsigc++-3.0-dev
-  - libspdlog-dev
-  - libwayland-dev
-  - scdoc
-  - upower
-  - libxkbregistry-dev
