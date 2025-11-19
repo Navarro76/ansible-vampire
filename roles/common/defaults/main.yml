@@ -1,7 +1,6 @@
 ---
 common_env_packages:
   - build-essential
-  - cargo
   - automake
   - cmake
   - meson
@@ -13,6 +12,17 @@ common_env_packages:
   - golang
   - vim
   - libasound2-dev
+  - libssl-dev
+  - curl
+  - autoconf
+  - autopoint
+  - libtool
+  - clang
+  - yasm
+  - intltool
+  - pkg-config
+  - libjansson-dev
+  - libblocksruntime-dev
 
 common_extra_packages:
   - brightnessctl

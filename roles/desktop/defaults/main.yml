@@ -4,8 +4,9 @@ github_dir: "/home/{{ ansible_user_id }}/github"
 
 # Directorios específicos para proyectos
 
-# Ruta al archivo .deb de web-greeter (este está dentro del rol)
-web_greeter_deb_path: "{{ role_path }}/files/web-greeter-3.5.3-debian.deb"
+# Rutas a iconos mpd
+icono_mpd_origen: "{{ role_path }}/files/mpd.svg"
+icono_mpd_destino: "/usr/share/icons/hicolor/scalable/apps/mpd.svg"
 
 # Directorio estándar para programas compilados manualmente
 install_prefix: "/usr/local"
@@ -15,7 +16,6 @@ desktop_packages:
   - swaybg
   - swaylock
   - swayidle
-  - mako-notifier
   - xdg-desktop-portal
   - xdg-desktop-portal-wlr
   - swayimg

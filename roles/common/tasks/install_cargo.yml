@@ -1,0 +1,22 @@
+---
+
+- name: Instalar rustup
+  shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    creates: "/home/{{ target_user }}/.cargo/bin/rustup"
+
+- name: Add Cargo to PATH
+  shell: |
+    source $HOME/.cargo/env
+  args:
+    executable: /bin/bash
+
+#- name: Instalar cargo-binstall
+#  become_user: "{{ target_user }}"
+#  shell: |
+#    source /home/{{ target_user }}/.cargo/env
+#    cargo install cargo-binstall
+#  args:
+#    creates: "/home/{{ target_user }}/.cargo/bin/cargo-binstall"
+#    executable: /bin/bash

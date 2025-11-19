@@ -2,7 +2,8 @@
 multimedia_files_dir: "{{ role_path }}/files"
 
 # Ruta al archivo mpd.conf (ajusta si usas un subdirectorio)
-mpd_config: "{{ multimedia_files_dir }}/mpd.conf"
+mpd_config: "{{ multimedia_files_dir }}/mpd/mpd.conf"
+deadbeef_deb_path: "{{ multimedia_files_dir }}/deadbeef/deadbeef-static_1.10.0-1_amd64.deb"
 
 multimedia_packages:
   - ncmpcpp
@@ -28,3 +29,27 @@ audio_packages:
   - xdg-desktop-portal-gtk
   - libplayerctl-dev
   - playerctl
+
+deadbeef_packages:
+  - libsamplerate0-dev
+  - libgtk-3-dev
+  - libasound2-dev
+  - libvorbis-dev
+  - libcurl4-openssl-dev
+  - libjpeg-dev
+  - libpng-dev
+  - libmad0-dev
+  - libmpg123-dev
+  - libflac-dev
+  - libwavpack-dev
+  - libsndfile1-dev
+  - libavformat-dev
+  - libpulse-dev
+  - libfaad-dev
+  - zlib1g-dev
+  - libzip-dev
+  - libpipewire-0.3-dev
+  - libnotify-dev
+  - libopusfile-dev
+
+

@@ -7,3 +7,39 @@
     dest: /usr/local/bin/oh-my-posh
     mode: '0755'
   register: download_oh_my_posh
+
+# ZSH config
+
+- name: Eliminar .zshrc existente de root
+  file:
+    path: "/root/.zshrc"
+    state: absent
+
+- name: Copiar zshrc a /root/
+  copy:
+    src: "{{ zshrc }}"
+    dest: "/root/.zshrc"
+    mode: '0755'
+
+# Copiar temas Oh My Posh
+
+- name: Verificar que el directorio de temas Oh My Posh existe
+  stat:
+    path: "{{ poshthemes }}"
+  register: ohmyposh_dir_stat
+
+- name: Crear carpeta /root/.poshthemes
+#  become_user: root
+  file:
+    path: "/root/.poshthemes"
+    state: directory
+    mode: '0755'
+
+- name: Copiar temas a /root/.poshthemes solo si existe el directorio
+#  become_user: root
+  copy:
+    src: "{{ item }}"
+    dest: "/root/.poshthemes/"
+  with_fileglob:
+    - "{{ poshthemes }}/*"
+  when: ohmyposh_dir_stat.stat.exists

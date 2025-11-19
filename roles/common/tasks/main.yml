@@ -9,6 +9,11 @@
   become: true
   tags: [common, env]
 
+- import_tasks: install_cargo.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [common, cargo]
+
 - import_tasks: install_extra_packages.yml
   become: true
   tags: [common, extra]

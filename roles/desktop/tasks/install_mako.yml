@@ -1,0 +1,31 @@
+---
+
+# ========== Instalar mako ==========
+
+- name: Instalar mako-notifier
+  apt:
+    name: mako-notifier
+    state: present
+    update_cache: yes
+
+# ==========  Reemplazar el icono del sistema mpd.svg ========== 
+# (mpDris2-rs usa icon-path absoluto → SE DEBE reemplazar)
+
+- name: Respaldar icono mpd.svg si existe
+  shell: |
+    if [ -f "{{ icono_mpd_destino }}" ]; then
+      mv "{{ icono_mpd_destino }}" "{{ icono_mpd_destino }}.bak"
+    fi
+  args:
+    executable: /bin/bash
+
+- name: Copiar icono mpd personalizado
+  copy:
+    src: "{{ icono_mpd_origen }}"
+    dest: "{{ icono_mpd_destino }}"
+    mode: 0644
+
+- name: Actualizar caché de iconos hicolor
+  command: gtk-update-icon-cache /usr/share/icons/hicolor
+
+

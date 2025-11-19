@@ -1,0 +1,23 @@
+---
+
+- name: Install cargo-binstall
+  shell: |
+    source $HOME/.cargo/env
+    cargo install cargo-binstall --locked
+  args:
+    executable: /bin/bash
+
+- name: Install cargo-binstall
+  shell: |
+    source $HOME/.cargo/env
+    cargo install cargo-binstall --locked
+  args:
+    executable: /bin/bash
+
+- name: Install RMPC via cargo-binstall
+  shell: |
+    source $HOME/.cargo/env && \
+    cargo binstall rmpc --no-confirm
+  args:
+    executable: /bin/bash
+

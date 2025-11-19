@@ -11,11 +11,15 @@
   become: true
   tags: [desktop, install, wayland]
 
-# Configuración básica para sway
-- import_tasks: user_sway_config.yml
+# Mako
+- import_tasks: install_mako.yml
   become: true
-  become_user: "{{ target_user }}"
-  tags: [desktop, config, sway]
+  tags: [desktop, install, mako]
+
+# Swaync
+#- import_tasks: install_swaync.yml
+#  become: true
+#  tags: [desktop, install, swaync]
 
 # Rofi
 - import_tasks: install_rofi.yml

@@ -1,0 +1,41 @@
+---
+
+# ========== Instalar chezmoi ==========
+
+- name: Crear carpeta ~/bin si no existe
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/bin"
+    state: directory
+    mode: '0755'
+
+- name: Instalar chezmoi en ~/bin
+  ansible.builtin.shell: |
+    sh -c "$(wget -qO- get.chezmoi.io)" -- -b /home/{{ target_user }}/bin
+  args:
+    creates: "/home/{{ target_user }}/bin/chezmoi"
+
+- name: Verificar si chezmoi está instalado
+  ansible.builtin.stat:
+    path: "/home/{{ target_user }}/bin/chezmoi"
+  register: chezmoi_stat
+
+- name: Verificar versión de chezmoi
+  ansible.builtin.command: "/home/{{ target_user }}/bin/chezmoi --version"
+  register: chezmoi_version
+  when: chezmoi_stat.stat.exists
+
+- debug:
+    var: chezmoi_version.stdout
+  when: chezmoi_stat.stat.exists
+
+# ========== Instalar delta con cargo [diff] ==========
+
+- name: Instalar git-delta usando cargo
+  environment:
+    PATH: "/home/{{ target_user }}/.cargo/bin:{{ ansible_env.PATH }}"
+  shell: |
+    source /home/{{ target_user }}/.cargo/env
+    cargo install git-delta --locked
+  args:
+    creates: "/home/{{ target_user }}/.cargo/bin/delta"
+

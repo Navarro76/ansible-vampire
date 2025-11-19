@@ -25,6 +25,6 @@
     - role: scripts
       tags: [scripts]
 
-#    - role: chezmoi
-#      tags: [chezmoi]
+    - role: chezmoi
+      tags: [chezmoi]
 

@@ -2,25 +2,6 @@
 
 # ========== Servicio mpdris2-rs ==========
 
-- name: Crear script wrapper minimalista para mpdris2-rs
-  ansible.builtin.copy:
-    dest: "/home/{{ target_user }}/.config/bin/mpdris2-rs-wrapper.sh"
-    content: |
-      #!/bin/bash
-      # Esperar a que D-Bus esté disponible
-      while [ ! -S "/run/user/$(id -u)/bus" ]; do
-          sleep 1
-      done
-      export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
-
-      # Detener reproducción automática
-      mpc stop >/dev/null 2>&1
-
-      # Iniciar mpdris2-rs
-      exec /usr/local/bin/mpdris2-rs "$@"
-    mode: '0755'
-  tags: wrapper
-
 - name: Crear directorio systemd user si no existe
   ansible.builtin.file:
     path: "/home/{{ target_user }}/.config/systemd/user"
@@ -32,22 +13,23 @@
     dest: "/home/{{ target_user }}/.config/systemd/user/mpdris2-rs.service"
     content: |
       [Unit]
-      Description=MPRIS2 Bridge for MPD (Rust implementation)
+      Description=Music Player Daemon D-Bus Bridge
       After=mpd.service
-      After=dbus.socket
       Wants=mpd.service
-      Requires=dbus.socket
 
       [Service]
       Type=simple
-      ExecStart=/home/{{ target_user }}/.config/bin/mpdris2-rs-wrapper.sh
-      Restart=always
-      RestartSec=10
-      # Agregar timeout de inicio más largo
-      TimeoutStartSec=10
+      ExecStart=/bin/bash -c 'sleep 15 && source <(strings /proc/$(pgrep -x sway)/environ | grep DBUS_SESSION_BUS_ADDRESS) && exec /usr/local/bin/mpdris2-rs --host 127.0.0.1:6600'
+      Restart=on-failure
+      RestartSec=15
+      StartLimitIntervalSec=60
+      StartLimitBurst=3
+      # Optimización para apagado rápido (ALEX)
+      TimeoutStopSec=3
+      KillMode=process
 
       [Install]
-      WantedBy=multi-user.target
+      WantedBy=default.target
     mode: '0644'
   register: service_file_created
 

@@ -1,0 +1,114 @@
+---
+
+# ========== Instalación de DeaDBeeF ==========
+
+- name: Instalar dependencias de deadbeef
+  apt:
+    name: "{{ deadbeef_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Remove previous DeaDBeeF source folder
+  file:
+    path: /tmp/deadbeef-src
+    state: absent
+  tags: [deadbeef]
+
+- name: Clone DeaDBeeF source
+  git:
+    repo: "https://github.com/DeaDBeeF-Player/deadbeef.git"
+    dest: /tmp/deadbeef-src
+    version: master
+  tags: [deadbeef]
+
+- name: Init and update submodules
+  command: git submodule update --init
+  args:
+    chdir: /tmp/deadbeef-src
+  tags: [deadbeef]
+
+- name: Bootstrap autoconf build system
+  command: ./autogen.sh
+  args:
+    chdir: /tmp/deadbeef-src
+  tags: [deadbeef]
+
+- name: Configure DeaDBeeF (no dispatch, no artwork)
+  command: ./configure --prefix=/usr \
+                       --disable-dispatch \
+                       --disable-artwork \
+                       --disable-gtk3 \
+                       --enable-gtk2 \
+                       --disable-lastfm
+  args:
+    chdir: /tmp/deadbeef-src
+  environment:
+    CC: clang
+    CXX: clang++
+
+- name: Build DeaDBeeF
+  command: make -j"{{ ansible_facts.processor_vcpus | default(2) }}"
+  args:
+    chdir: /tmp/deadbeef-src
+  tags: [deadbeef]
+
+- name: Install DeaDBeeF
+  command: make install
+  args:
+    chdir: /tmp/deadbeef-src
+  become: true
+  tags: [deadbeef]
+
+# Instalar DeaDBeeF desde el archivo .deb local
+# - name: Install Deadbeef from local .deb
+#  apt:
+#    deb: "{{ deadbeef_deb_path }}"
+#  become: yes
+
+# ========== Instalación de DeaDBeeF ==========
+
+# Crear directorio temporal para clonar el plugin
+- name: Create directory for plugin build
+  file:
+    path: /tmp/deadbeef-mpris2
+    state: directory
+
+# Clonar repositorio del plugin
+- name: Clone deadbeef-mpris2-plugin repository
+  git:
+    repo: "https://github.com/DeaDBeeF-Player/deadbeef-mpris2-plugin.git"
+    dest: /tmp/deadbeef-mpris2
+
+# Ejecutar autoreconf
+- name: Run autoreconf
+  command: autoreconf --install
+  args:
+    chdir: /tmp/deadbeef-mpris2
+
+# Ejecutar configure
+- name: Configure mpris plugin
+  command: ./configure --prefix=/usr
+  args:
+    chdir: /tmp/deadbeef-mpris2
+
+# Compilar el plugin
+- name: Build mpris plugin
+  command: make
+  args:
+    chdir: /tmp/deadbeef-mpris2
+
+# Instalar el plugin
+- name: Install mpris plugin
+  command: make install
+  args:
+    chdir: /tmp/deadbeef-mpris2
+  become: true
+
+# Limpiar directorio de compilación (opcional)
+- name: Remove plugin build directory
+  file:
+    path: /tmp/deadbeef-mpris2
+    state: absent
+
+# Tu .deb instalará Deadbeef en: /usr/bin/deadbeef, /usr/lib/deadbeef/
+# make install dejará el plugin en /usr/local/lib/deadbeef/

@@ -6,13 +6,6 @@
     name: rofi
     state: build-dep
 
-# ========== Dependencias específicas para Wayland ==========
-- name: Instalar dependencias específicas para Wayland
-  apt:
-    name: "{{ wayland_dependencies }}"
-    state: present
-    update_cache: yes
-
 # ========== Instalación de Rofi ==========
 
 - name: Clonar el repositorio de rofi

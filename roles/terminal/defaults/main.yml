@@ -7,6 +7,9 @@ bat_deb: "{{ terminal_files_dir }}/tools/bat_0.25.0_amd64.deb"
 lsd_deb: "{{ terminal_files_dir }}/tools/lsd_1.1.5_amd64.deb"
 zsh_sudo_plugin: "{{ terminal_files_dir }}/zsh-sudo/sudo.plugin.zsh"
 p10k_config: "{{ terminal_files_dir }}/p10k/p10k.zsh"
+poshthemes: "{{ terminal_files_dir }}/oh-my-posh/poshthemes"
+zshrc: "{{ terminal_files_dir }}/oh-my-posh/zshrc"
+
 
 terminal_packages:
   - zsh
@@ -20,3 +23,4 @@ terminal_packages:
   - acl
   - scrot
   - fastfetch
+  - glow
