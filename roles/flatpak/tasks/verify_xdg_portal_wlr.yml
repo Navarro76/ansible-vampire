@@ -1,0 +1,34 @@
+---
+
+- name: Check which binary systemd is using
+  become: false
+  become_user: alex
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ lookup('ansible.builtin.pipe', 'id -u alex') }}"
+  command:
+    cmd: >
+      systemctl --user show -p ExecStart xdg-desktop-portal-wlr.service
+  register: portal_execstart
+
+- name: Show ExecStart
+  debug:
+    var: portal_execstart.stdout
+
+- name: Verify xdg-desktop-portal-wlr is active
+  become: false
+  become_user: alex
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ lookup('ansible.builtin.pipe', 'id -u alex') }}"
+  command: systemctl --user is-active xdg-desktop-portal-wlr.service
+  register: portal_active
+  failed_when: portal_active.stdout != "active"
+
+- name: Show service status
+  debug:
+    var: portal_active.stdout
+
+- name: Fail if local /usr/local version is not being used
+  fail:
+    msg: "Systemd user portal is NOT using the compiled version."
+  when: "'/usr/local/libexec/xdg-desktop-portal-wlr' not in portal_execstart.stdout"
+

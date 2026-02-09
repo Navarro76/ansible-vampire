@@ -1,0 +1,8 @@
+---
+
+# Aplicaciones de descargas 
+- name: Instalar aplicaciones de descargas
+  apt:
+    name: "{{ download_apps }}"
+    state: present
+    update_cache: yes

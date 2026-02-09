@@ -1,0 +1,40 @@
+---
+- name: Ensure SDKMAN directory exists
+  become: true
+  become_user: "{{ target_user }}"
+  file:
+    path: "{{ target_user_home }}/.sdkman"
+    state: directory
+
+- name: Install SDKMAN
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    curl -s "https://get.sdkman.io" | bash
+  args:
+    creates: "{{ target_user_home }}/.sdkman/bin/sdkman-init.sh"
+
+- name: Load SDKMAN
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    source {{ target_user_home }}/.sdkman/bin/sdkman-init.sh
+  register: sdkman_env
+
+- name: Install SDKMAN Java versions
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    source {{ target_user_home }}/.sdkman/bin/sdkman-init.sh
+    sdk install java {{ item }}
+  args:
+    creates: "{{ target_user_home }}/.sdkman/candidates/java/{{ item }}"
+  loop: "{{ sdkman_java_versions }}"
+
+- name: Set default Java version
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    source {{ target_user_home }}/.sdkman/bin/sdkman-init.sh
+    sdk default java {{ sdkman_default_java }}
+  when: sdkman_default_java is defined

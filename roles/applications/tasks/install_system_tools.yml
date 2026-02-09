@@ -1,0 +1,9 @@
+---
+
+# Herramientas del sistema 
+- name: Instalar herramientas del sistema
+  apt:
+    name: "{{ system_tools_apps }}"
+    state: present
+    update_cache: yes
+

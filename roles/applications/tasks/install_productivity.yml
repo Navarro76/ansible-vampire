@@ -1,0 +1,8 @@
+---
+
+# Aplicaciones de productividad 
+- name: Instalar aplicaciones de productividad
+  apt:
+    name: "{{ productivity_apps }}"
+    state: present
+    update_cache: yes

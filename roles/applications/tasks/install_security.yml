@@ -1,0 +1,9 @@
+---
+
+# Aplicaciones de seguridad 
+- name: Instalar aplicaciones de seguridad
+  apt:
+    name: "{{ security_apps }}"
+    state: present
+    update_cache: yes
+

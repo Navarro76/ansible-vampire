@@ -1,0 +1,11 @@
+---
+
+- name: "Reiniciar Privoxy"
+  ansible.builtin.systemd:
+    name: privoxy
+    state: restarted
+
+- name: reiniciar tor
+  systemd:
+    name: tor
+    state: restarted

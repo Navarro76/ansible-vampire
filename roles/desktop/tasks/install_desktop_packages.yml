@@ -5,3 +5,10 @@
     name: "{{ desktop_packages }}"
     state: present
     update_cache: yes
+
+# Aplicaciones para desktop
+- name: Instala aplicaciones como gestor de archivos
+  apt:
+    name: "{{ desktop_apps }}"
+    state: present
+    update_cache: yes

@@ -3,7 +3,7 @@
 
 - import_tasks: install_multimedia_packages.yml
   become: true
-  tags: [multimedia, install]
+  tags: [multimedia, install, multimedia_apps]
 
 - import_tasks: install_audio_packages.yml
   become: true

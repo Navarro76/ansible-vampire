@@ -1,0 +1,57 @@
+---
+
+flatpak_packages:
+  - xdg-desktop-portal
+  - xdg-desktop-portal-gtk
+
+# Flatpak runtimes a instalar para el usuario
+flatpak_runtimes:
+  - org.freedesktop.Platform//23.08
+
+# Flatpak apps a instalar para el usuario
+flatpak_apps:
+  - com.github.marktext.marktext
+  - org.gnome.Loupe
+  - com.calibre_ebook.calibre
+  - info.febvre.Komikku
+  - net.sourceforge.mcomix
+  - com.zettlr.Zettlr
+  - md.obsidian.Obsidian
+  - org.onlyoffice.desktopeditors
+  - org.librepcb.LibrePCB
+
+flatpak_games:
+  - com.usebottles.bottles
+  - org.libretro.RetroArch
+  - com.dosbox_x.DOSBox-X
+  - io.github.dosbox-staging
+  - net.pcsx2.PCSX2
+  - net.rpcs3.RPCS3
+
+flatpak_network:
+  - io.gitlab.librewolf-community
+
+flatpak_audio:
+  - me.timschneeberger.jdsp4linux
+
+# Controla si se actualizan las apps del usuario automáticamente
+flatpak_update: true
+
+# Permisos adicionales del sandbox:
+#  - "--filesystem=home com.visualstudio.code"
+#  - "--filesystem=xdg-download com.spotify.Client"
+#  - "--socket=system-bus com.example.App"
+flatpak_overrides: []
+
+# aplicaciones con problemas con Wayland/WLroots
+#  - com.github.johnfactotum.Foliate (funiconó, pero instalé con apt
+#  - com.yacreader.YACReader
+#  - org.qownnotes.QOwnNotes
+#  - io.github.htkhiem.Euphonica
+
+# apliaciones desinstaladas por otras razones
+#  - net.cozic.joplin_desktop
+#  - org.gnome.EasyTAG
+
+
+

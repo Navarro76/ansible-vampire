@@ -1,0 +1,14 @@
+---
+
+# ============================================
+# TYPST PREVIEW OPCIONES
+# ============================================
+
+# Opción B: Typst Preview for Neovim
+- name: Install typst-preview.nvim (Neovim)
+  git:
+    repo: "https://github.com/chomosuke/typst-preview.nvim"
+    dest: "{{ lookup('env','HOME') }}/.config/nvim/pack/plugins/start/typst-preview.nvim"
+  when: typst_preview == "nvim"
+
+

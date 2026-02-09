@@ -1,0 +1,48 @@
+---
+# ========== Instalación de paquetes ==========
+
+- import_tasks: install_flatpak_packages.yml
+  become: true
+  tags: [flatpak, install, flatpak_packages]
+
+- import_tasks: install_flatpak.yml
+  become: true
+  tags: [flatpak, install]
+
+- import_tasks: install_xdg_portal_wlr.yml
+  become: true
+  tags: [flatpak, install, xdg_portal_wlr]
+
+# ========== Configuración usuario ==========
+
+- import_tasks: configure_flathub_user.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, config]
+
+- import_tasks: user_flatpak.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_apps]
+
+- import_tasks: user_flatpak_games.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_games]
+
+- import_tasks: user_flatpak_network.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_network]
+
+- import_tasks: user_xdg_portal_wlr.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, user_xdg_portal_wlr]
+
+- import_tasks: verify_xdg_portal_wlr.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, verify_xdg_portal_wlr]
+
+

@@ -1,0 +1,12 @@
+---
+- name: Install SDKMAN
+  import_tasks: sdkman.yml
+  when: sdkman_install
+
+- name: Install Rustup
+  import_tasks: rustup.yml
+  when: rust_install
+
+- name: Install ASDF version manager
+  import_tasks: asdf.yml
+  when: asdf_install

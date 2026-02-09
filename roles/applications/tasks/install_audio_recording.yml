@@ -1,0 +1,8 @@
+---
+
+# Aplicaciones para grabación de audio
+- name: Instalar aplicaciones para grabación de audio
+  apt:
+    name: "{{ audio_recording_apps }}"
+    state: present
+    update_cache: yes

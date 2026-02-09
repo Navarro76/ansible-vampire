@@ -1,0 +1,119 @@
+---
+# ============================================
+# PREPARAR ENTORNO Y DIRECTORIOS
+# ============================================
+
+- name: Ensure cargo bin directory exists with correct permissions
+  file:
+    path: "{{ typst_install_path }}"
+    state: directory
+    mode: "0755"
+
+
+# ============================================
+# DETECCIÓN REAL DE TYPST
+# ============================================
+# Si el archivo existe y es ejecutable → typst_installed = true
+# Si falta o no es ejecutable → typst_installed = false
+
+- name: Check if typst binary exists
+  stat:
+    path: "{{ typst_install_path }}/typst"
+  register: typst_stat
+
+
+- name: Check typst version if binary exists
+  shell: |
+    source {{ target_home }}/.cargo/env
+    "{{ typst_install_path }}/typst" --version
+  args:
+    executable: /bin/bash
+  register: typst_version_output
+  when: typst_stat.stat.exists and typst_stat.stat.mode|int >= 493  # >= 0755
+  ignore_errors: true
+
+
+# Registro booleano: ¿Typst está instalado realmente?
+- name: Set fact typst_installed
+  set_fact:
+    typst_installed: "{{ (typst_stat.stat.exists and typst_version_output.rc == 0) | bool }}"
+
+
+# ============================================
+# INSTALACIÓN DE TYPST (solo si no existe)
+# ============================================
+
+- name: Install Typst (stable channel)
+  shell: |
+    source {{ target_home }}/.cargo/env
+    cargo install --locked typst-cli
+  args:
+    executable: /bin/bash
+  when: typst_channel == "stable" and not typst_installed
+  register: typst_stable_output
+
+
+- name: Install Typst (development channel)
+  shell: |
+    source {{ target_home }}/.cargo/env
+    cargo install --git https://github.com/typst/typst --locked typst-cli
+  args:
+    executable: /bin/bash
+  when: typst_channel == "dev" and not typst_installed
+  register: typst_dev_output
+
+
+# ============================================
+# GARANTIZAR PERMISOS CORRECTOS PARA EL BINARIO
+# ============================================
+
+- name: Ensure typst binary is executable
+  file:
+    path: "{{ typst_install_path }}/typst"
+    mode: "0755"
+  when: typst_installed or typst_stable_output is defined or typst_dev_output is defined
+  ignore_errors: true
+
+
+# ============================================
+# COPIAR BINARIO A /usr/local/bin (remote_src)
+# ============================================
+
+- name: Copy typst binary to /usr/local/bin
+  become: true
+  become_user: root
+  copy:
+    src: "{{ typst_install_path }}/typst"
+    dest: /usr/local/bin/typst
+    mode: "0755"
+    remote_src: true
+  when: typst_installed or typst_stable_output is defined or typst_dev_output is defined
+
+# ============================================
+# WRAPPER OPCIONAL
+# ============================================
+
+- name: Create wrapper script for consistent environment
+  become: true
+  become_user: root
+  copy:
+    dest: /usr/local/bin/typst-wrapper
+    mode: "0755"
+    content: |
+      #!/bin/bash
+      source {{ target_home }}/.cargo/env
+      exec typst "$@"
+  when: typst_create_wrapper
+
+
+# ============================================
+# AUTO-ACTUALIZACIÓN (solo si typst_installed)
+# ============================================
+
+- name: Update Typst via cargo (autoupdate)
+  shell: |
+    source {{ target_home }}/.cargo/env
+    cargo install typst-cli --force --locked
+  args:
+    executable: /bin/bash
+  when: typst_autoupdate and typst_installed

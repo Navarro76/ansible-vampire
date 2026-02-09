@@ -1,0 +1,8 @@
+---
+# Paquetes para flatpak
+- name: Instalar paquetes flatpak
+  apt:
+    name: "{{ flatpak_packages }}"
+    state: present
+    update_cache: yes
+

@@ -9,6 +9,7 @@ multimedia_packages:
   - ncmpcpp
   - mpd
   - smplayer
+  - smplayer-themes
   - mpc
 
 audio_packages:

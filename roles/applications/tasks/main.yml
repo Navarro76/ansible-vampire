@@ -1,0 +1,63 @@
+---
+
+- import_tasks: install_productivity.yml
+  become: true
+  tags: [applications, productivity]
+
+- import_tasks: install_download.yml
+  become: true
+  tags: [applications, download]
+
+- import_tasks: install_system_tools.yml
+  become: true
+  tags: [applications, system_tools]
+
+- import_tasks: install_security.yml
+  become: true
+  tags: [applications, security]
+
+- import_tasks: install_multimedia.yml
+  become: true
+  tags: [applications, multi]
+
+- import_tasks: install_audio_recording.yml
+  become: true
+  tags: [applications, audio_recording]
+
+# APLICACIONES INDIVIDUALES
+
+- import_tasks: install_warp.yml
+  become: true
+  tags: [applications, warp]
+
+- import_tasks: install_tor.yml
+  become: true
+  tags: [applications, tor]
+
+- import_tasks: install_privoxy.yml
+  become: true
+  tags: [applications, privoxy]
+
+- import_tasks: install_aria2.yml
+  become: true
+  tags: [applications, aria2]
+
+- import_tasks: install_protonvpn.yml
+  become: true
+  tags: [applications, protonvpn]
+
+- import_tasks: install_typst.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [applications, typst]
+
+- import_tasks: install_typst_preview.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [applications, typst_preview]
+
+- import_tasks: config_aria2.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [applications, config_aria2]
+

@@ -1,0 +1,7 @@
+---
+
+- name: Ensure Flatpak is installed
+  package:
+    name: flatpak
+    state: present
+

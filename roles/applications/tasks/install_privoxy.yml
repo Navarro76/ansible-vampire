@@ -1,0 +1,25 @@
+---
+
+- name: Instalar Privoxy
+  ansible.builtin.apt:
+    name: privoxy
+    state: present
+    update_cache: yes
+
+- name: Configurar Privoxy (Túnel WARP y gestión de conexiones)
+  ansible.builtin.lineinfile:
+    path: /etc/privoxy/config
+    line: "{{ item }}"
+    state: present
+    insertafter: EOF
+  loop:
+    - "forward-socks5t / 127.0.0.1:40001 ."
+    - "keep-alive-timeout 5"
+    - "connection-sharing 0"
+  notify: "Reiniciar Privoxy"
+
+- name: Asegurar que Privoxy esté iniciado
+  ansible.builtin.systemd:
+    name: privoxy
+    state: started
+    enabled: yes

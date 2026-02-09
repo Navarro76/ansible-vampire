@@ -1,0 +1,10 @@
+---
+
+- name: Ensure Flathub remote exists for user
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
+    enabled: true
+    state: present
+  notify: Refresh flatpak remotes

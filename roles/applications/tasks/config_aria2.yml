@@ -1,0 +1,58 @@
+---
+
+- name: Crear estructura de directorios
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - "{{ aria2_conf_dir }}"
+    - "{{ systemd_user_dir }}"
+    - "{{ target_home }}/Descargas"
+
+- name: Crear archivos de configuración y sesión
+  shell: "touch {{ aria2_conf_dir }}/aria2.session"
+  args:
+    creates: "{{ aria2_conf_dir }}/aria2.session"
+
+- name: Generar aria2.conf
+  copy:
+    dest: "{{ aria2_conf_dir }}/aria2.conf"
+    content: |
+      dir=/mnt/Nueva/Aria2
+      input-file={{ aria2_conf_dir }}/aria2.session
+      save-session={{ aria2_conf_dir }}/aria2.session
+      enable-rpc=true
+      rpc-allow-origin-all=true
+      rpc-listen-all=true
+      max-connection-per-server=16
+      split=16
+
+- name: Instalar AriaNg (WebUI)
+  unarchive:
+    src: "https://github.com/mayswind/AriaNg/releases/download/{{ ariang_version }}/AriaNg-{{ ariang_version }}-AllInOne.zip"
+    dest: "{{ aria2_conf_dir }}"
+    remote_src: yes
+
+- name: Crear servicio de systemd (USER)
+  copy:
+    dest: "{{ systemd_user_dir }}/aria2.service"
+    content: |
+      [Unit]
+      Description=Aria2 Download Manager (User Service)
+      After=network.target
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/aria2c --conf-path=%h/.config/aria2/aria2.conf
+      Restart=on-failure
+
+      [Install]
+      WantedBy=default.target
+
+- name: Habilitar el servicio de usuario
+  systemd:
+    name: aria2
+    scope: user
+    enabled: yes
+    state: started
+    daemon_reload: yes

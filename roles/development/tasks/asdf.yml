@@ -1,0 +1,46 @@
+---
+- name: Install ASDF git repo
+  become: true
+  become_user: "{{ target_user }}"
+  git:
+    repo: "https://github.com/asdf-vm/asdf.git"
+    dest: "{{ target_user_home }}/.asdf"
+    version: "v0.14.1"
+
+- name: Add ASDF init to .zshrc
+  become: true
+  become_user: "{{ target_user }}"
+  lineinfile:
+    path: "{{ target_user_home }}/.zshrc"
+    line: '. {{ target_user_home }}/.asdf/asdf.sh'
+    state: present
+
+- name: Ensure ASDF plugins are installed
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    . {{ target_user_home }}/.asdf/asdf.sh
+    asdf plugin-add {{ item.name }} || true
+  loop: "{{ asdf_plugins }}"
+
+- name: Install ASDF plugin versions
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    . {{ target_user_home }}/.asdf/asdf.sh
+    asdf install {{ item.name }} {{ item_version }}
+  loop: "{{ asdf_plugins | subelements('versions', skip_missing=True) }}"
+  loop_control:
+    loop_var: plugin
+  vars:
+    item_version: "{{ plugin.1 }}"
+    item: "{{ plugin.0 }}"
+
+- name: Set global versions
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    . {{ target_user_home }}/.asdf/asdf.sh
+    asdf global {{ item.name }} {{ item.global }}
+  when: item.global is defined
+  loop: "{{ asdf_plugins }}"

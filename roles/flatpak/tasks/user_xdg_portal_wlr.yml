@@ -1,0 +1,46 @@
+---
+
+- name: Ensure systemd user directory exists
+  file:
+    path: "/home/{{ target_user }}/.config/systemd/user"
+    state: directory
+
+- name: Install user systemd service override for xdg-desktop-portal-wlr
+  copy:
+    dest: "/home/{{ target_user }}/.config/systemd/user/xdg-desktop-portal-wlr.service"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=xdg-desktop-portal-wlr (wlroots portal)
+      After=graphical-session.target
+
+      [Service]
+      Type=dbus
+      BusName=org.freedesktop.impl.portal.desktop.wlr
+      ExecStart=/usr/libexec//usr/local/libexec/xdg-desktop-portal-wlr
+      Restart=on-failure
+
+      [Install]
+      WantedBy=default.target
+  tags: [wlr, systemd]
+
+- name: Reload systemd user daemon
+  systemd:
+    daemon_reload: true
+    scope: user
+  tags: [wlr]
+
+- name: Restart xdg-desktop-portal-wlr user service
+  systemd:
+    name: xdg-desktop-portal-wlr.service
+    state: restarted
+    scope: user
+  tags: [wlr]
+
+- name: Restart xdg-desktop-portal (main service)
+  systemd:
+    name: xdg-desktop-portal.service
+    state: restarted
+    scope: user
+  tags: [wlr]
+

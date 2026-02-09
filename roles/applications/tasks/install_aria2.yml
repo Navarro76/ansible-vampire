@@ -1,0 +1,18 @@
+---
+
+# ========== Instalación de aria2 ==========
+
+- name: Instalar aria2 y paquetes base
+  apt:
+    name:
+      - aria2
+      - wget
+      - unzip
+    state: present
+    update_cache: yes
+
+- name: Habilitar linger para el usuario alex
+  command: loginctl enable-linger "{{ target_user }}"
+  args:
+    creates: /var/lib/systemd/linger/"{{ target_user }}"
+

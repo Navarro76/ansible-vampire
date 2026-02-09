@@ -1,0 +1,4 @@
+---
+
+- name: Refresh flatpak remotes
+  command: flatpak update --user --appstream

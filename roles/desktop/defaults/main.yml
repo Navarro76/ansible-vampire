@@ -16,8 +16,6 @@ desktop_packages:
   - swaybg
   - swaylock
   - swayidle
-  - xdg-desktop-portal
-  - xdg-desktop-portal-wlr
   - swayimg
   - papersway
   - waybar
@@ -27,8 +25,17 @@ desktop_packages:
   - waybar
   - libnotify-bin
   - nwg-look
+  - qt5ct
+  - qt6ct
+  - qt6-wayland
 
 wayland_dependencies:
   - wayland-protocols
   - libwayland-dev
   - libpango1.0-dev
+
+desktop_apps:
+  - pcmanfm
+  - gvfs
+  - gvfs-backends
+  - mate-polkit

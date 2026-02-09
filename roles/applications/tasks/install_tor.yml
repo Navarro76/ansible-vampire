@@ -1,0 +1,42 @@
+---
+
+- name: Actualizar cache APT
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Instalar TOR
+  apt:
+    name: tor
+    state: present
+  notify: reiniciar tor
+
+- name: Habilitar y arrancar servicio TOR
+  systemd:
+    name: tor
+    enabled: yes
+    state: started
+
+- name: Esperar a que el proxy SOCKS esté disponible (9050)
+  wait_for:
+    host: 127.0.0.1
+    port: 9050
+    timeout: 30
+
+- name: Mostrar confirmación
+  debug:
+    msg: "TOR activo y proxy SOCKS5 disponible en 127.0.0.1:9050"
+
+
+#- name: Instalar paquete tor
+#  apt:
+#    name: tor
+#    state: present
+#    update_cache: yes
+
+#- name: Habilitar y arrancar servicio tor
+#  systemd:
+#    name: tor
+#    enabled: yes
+#    state: started
+

@@ -28,3 +28,8 @@
     - role: chezmoi
       tags: [chezmoi]
 
+    - role: flatpak
+      tags: [flatpak]
+
+    - role: applications
+      tags: [flatpak]

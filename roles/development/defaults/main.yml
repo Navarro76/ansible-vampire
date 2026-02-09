@@ -1,0 +1,31 @@
+---
+
+# ===== SDKMAN =====
+sdkman_install: true
+sdkman_java_versions:
+  - "17.0.10-tem"
+  - "21.0.2-tem"
+  - "25.0.0-tem"
+sdkman_default_java: "21.0.2-tem"
+
+# ===== Rust =====
+rust_install: true
+rust_default_toolchain: "stable"
+rust_extra_toolchains:
+  - "nightly"
+
+# ===== ASDF =====
+asdf_install: true
+asdf_plugins:
+  - name: "nodejs"
+    versions:
+      - "18.20.0"
+    global: "18.20.0"
+  - name: "php"
+    versions:
+      - "8.2.16"
+    global: "8.2.16"
+  - name: "python"
+    versions:
+      - "3.12.2"
+    global: "3.12.2"

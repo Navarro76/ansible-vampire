@@ -1,0 +1,26 @@
+---
+
+- name: Install Flatpak runtimes for user
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    method: user
+    remote: flathub
+  loop: "{{ flatpak_runtimes | default([]) }}"
+
+- name: Install Flatpak applications for user
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    method: user
+    remote: flathub
+  loop: "{{ flatpak_games | default([]) }}"
+
+- name: Update Flatpak apps for user
+  become: true
+  become_user: "{{ target_user }}"
+  command: flatpak update --user -y
+
+- command: flatpak override --user {{ item }}
+  loop: "{{ flatpak_overrides | default([]) }}"
+  when: flatpak_overrides is defined

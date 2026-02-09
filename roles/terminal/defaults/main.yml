@@ -24,3 +24,9 @@ terminal_packages:
   - scrot
   - fastfetch
   - glow
+  - unrar
+  - p7zip-full
+  - zip
+  - unzip
+  - tree
+  - btm

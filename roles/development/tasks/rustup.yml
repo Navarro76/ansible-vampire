@@ -1,0 +1,21 @@
+---
+- name: Install rustup
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    creates: "{{ target_user_home }}/.cargo/bin/rustup"
+
+- name: Install default Rust toolchain
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    {{ target_user_home }}/.cargo/bin/rustup default {{ rust_default_toolchain }}
+
+- name: Install extra toolchains
+  become: true
+  become_user: "{{ target_user }}"
+  shell: |
+    {{ target_user_home }}/.cargo/bin/rustup toolchain install {{ item }}
+  loop: "{{ rust_extra_toolchains }}"
