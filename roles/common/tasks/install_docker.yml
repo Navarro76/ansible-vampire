@@ -1,0 +1,83 @@
+---
+
+# 1. Limpieza de versiones antiguas
+- name: Remove old Docker-related packages
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+      - docker-doc
+      - podman-docker
+      - containerd
+      - runc
+    state: absent
+
+# 2. Preparación de dependencias y llaves
+- name: Install prerequisite packages
+  apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: true
+
+- name: Create directory for apt keyrings
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Docker official GPG key
+  get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+# 3. Configuración del repositorio (Formato DEB822)
+- name: Configure Docker repository (DEB822 format)
+  copy:
+    dest: /etc/apt/sources.list.d/docker.sources
+    content: |
+      Types: deb
+      URIs: https://download.docker.com/linux/debian
+      Suites: {{ ansible_distribution_release }}
+      Components: stable
+      Architectures: {{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}
+      Signed-By: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+# 4. Instalación de Docker Engine y Plugins
+- name: Install Docker packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+# 5. Gestión del servicio y permisos
+- name: Ensure Docker service is running and enabled
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Add target user to docker group
+  user:
+    name: "{{ target_user }}"
+    groups: docker
+    append: true
+
+# 6. Verificación (Opcional, genera logs en el output de Ansible)
+- name: Verify Docker Compose version
+  shell: docker compose version
+  register: docker_compose_res
+  changed_when: false
+
+- name: Show Docker Compose version
+  debug:
+    msg: "{{ docker_compose_res.stdout }}"
+

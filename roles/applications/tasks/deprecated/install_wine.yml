@@ -1,0 +1,52 @@
+---
+# Instalar WineHQ Stable en Debian 13 (Trixie)
+
+- name: Habilitar arquitectura i386
+  command: dpkg --add-architecture i386
+  changed_when: false
+
+- name: Crear directorio para keyrings
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Descargar y agregar clave de WineHQ
+  get_url:
+    url: https://dl.winehq.org/wine-builds/winehq.key
+    dest: /tmp/winehq.key
+
+- name: Transformar clave a formato gpg dearmor
+  shell: gpg --dearmor < /tmp/winehq.key > /etc/apt/keyrings/winehq-archive.key
+  args:
+    creates: /etc/apt/keyrings/winehq-archive.key
+
+- name: Añadir repositorio de WineHQ para Debian Trixie
+  get_url:
+    url: https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources
+    dest: /etc/apt/sources.list.d/winehq-trixie.sources
+
+- name: Actualizar caché de paquetes
+  apt:
+    update_cache: yes
+
+- name: Instalar WineHQ Stable (con recomendaciones)
+  apt:
+    name: winehq-stable
+    state: present
+    install_recommends: yes
+
+- name: Instalar dependencia Xlib para corregir error de UMU
+  apt:
+    name: python3-xlib
+    state: present
+
+- name: Verificar versión instalada
+  command: wine --version
+  register: wine_out
+  changed_when: false
+
+- name: Resultado de la instalación
+  debug:
+    msg: "Instalación completada. Versión: {{ wine_out.stdout }}"
+

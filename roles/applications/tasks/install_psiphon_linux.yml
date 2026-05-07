@@ -1,0 +1,50 @@
+---
+
+- name: Instalar dependencias para PsiphonLinux
+  apt:
+    name: [python3, python3-pip, wget, coreutils, grep]
+    state: present
+
+- name: Clonar el repositorio de PsiphonLinux
+  become_user: "{{ target_user }}"
+  git:
+    repo: "https://github.com/SpherionOS/PsiphonLinux.git"
+    dest: "/home/{{ target_user }}/PsiphonLinux"
+    update: yes
+
+- name: Descargar el binario oficial de Psiphon Core
+  become_user: "{{ target_user }}"
+  shell: |
+    cd /home/{{ target_user }}/PsiphonLinux
+    # El script oficial detecta la arquitectura y descarga el binario correcto
+    bash ./update_core.sh
+  args:
+    creates: "/home/{{ target_user }}/PsiphonLinux/psiphon-tunnel-core"
+
+- name: Crear el servicio de Systemd (User Mode) para Psiphon
+  copy:
+    dest: "/home/{{ target_user }}/.config/systemd/user/psiphon.service"
+    content: |
+      [Unit]
+      Description=Psiphon Proxy Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      WorkingDirectory=/home/{{ target_user }}/PsiphonLinux
+      # Usamos el puerto 1080 para que coincida con tu configuración de MegaBasterd
+      ExecStart=/usr/bin/python3 psiphonproxy.py --socks 1080
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=default.target
+
+- name: Activar el nuevo servicio de Psiphon
+  systemd:
+    name: psiphon.service
+    scope: user
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  become_user: "{{ target_user }}"

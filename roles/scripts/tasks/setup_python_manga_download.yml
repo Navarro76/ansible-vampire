@@ -1,0 +1,34 @@
+---
+
+# Esta tarea REQUIERE ser root para instalar en el sistema
+- name: Install the system dependencies to download mangas
+  become: true
+  ansible.builtin.apt:
+    name:
+      - firefox-esr       # navegador firefox
+      - python3-requests  # para la descarga
+      - python3-bs4       # para encontrar las imágenes
+      - python3-pil       # para la conversión de formato
+      - python3-selenium  # levanta un navegador real (o en modo headless)
+    state: present
+    update_cache: yes    # Recomendado para evitar errores de paquetes no encontrados
+
+- name: Descargar y extraer Geckodriver
+  unarchive:
+    src: "{{ gecko_url }}"
+    dest: "{{ install_path }}"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: '0755'
+    creates: "{{ install_path }}/geckodriver"
+
+- name: Verificar instalación de geckodriver
+  command: geckodriver --version
+  register: gecko_check
+  changed_when: false
+
+- name: Mostrar versión instalada
+  debug:
+    msg: "Geckodriver instalado correctamente: {{ gecko_check.stdout_lines[0] }}"
+

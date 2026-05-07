@@ -1,0 +1,30 @@
+---
+
+#- import_tasks: install_wine.yml
+#  become: true
+#  tags: [applications, wine]
+
+# Otros Imports
+
+- import_tasks: install_psiphon_brainfuck.yml
+  become: true
+  tags: [applications, psiphon_brainfuck]
+
+- import_tasks: config_psiphon_service.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [applications, psiphon_brainfuck, psiphon_service]
+
+- import_tasks: cleanup_brainfuck.yml
+  become: true
+  tags: [applications, cleanup_brainfuck]
+
+# APLICACIONES INDIVIDUALES
+
+- import_tasks: install_warp.yml
+  become: true
+  tags: [applications, warp]
+
+- import_tasks: clean_warp.yml
+  become: true
+  tags: [applications, clean_warp]

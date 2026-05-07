@@ -1,0 +1,25 @@
+---
+
+# Esta tarea REQUIERE ser root para instalar en el sistema
+- name: Install system dependencies for OpenCV
+  become: true
+  ansible.builtin.apt:
+    name:
+      - python3-venv
+      - python3-pip
+      - libgl1           # Nueva librería que reemplaza a mesa-glx
+      - libglib2.0-0
+    state: present
+    update_cache: yes    # Recomendado para evitar errores de paquetes no encontrados
+
+# Esta tarea debe ser ejecutada por TU USUARIO
+- name: Create Virtualenv and install Python imaging packages
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.pip:
+    name:
+      - opencv-python
+      - numpy
+    virtualenv: "/home/{{ target_user }}/.dotfiles/scripts/venv_imaging"
+    virtualenv_command: python3 -m venv
+    state: present

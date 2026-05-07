@@ -1,0 +1,23 @@
+---
+
+# ========== Instalar y configurar Podman ==========
+
+- name: Actualizar caché de apt
+  apt:
+    update_cache: yes
+
+- name: Instalar Podman y dependencias recomendadas
+  apt:
+    name:
+      - podman
+      - podman-compose
+      - buildah
+      - skopeo
+      - slirp4netns  # Crucial para red en modo usuario (rootless)
+      - fuse-overlayfs
+    state: present
+
+- name: Asegurar que el módulo tun esté cargado
+  modprobe:
+    name: tun
+    state: present

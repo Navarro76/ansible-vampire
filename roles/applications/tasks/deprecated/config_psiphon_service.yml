@@ -1,0 +1,42 @@
+---
+- name: Asegurar que el directorio de systemd de usuario exista
+  ansible.builtin.file:
+    path: "{{ systemd_user_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Crear el servicio de Systemd (User Mode) para Psiphon
+  copy:
+    dest: "{{ systemd_user_dir }}/psiphon-brainfuck.service"
+    content: |
+      [Unit]
+      Description=Brainfuck Psiphon Pro Go Tunnel
+      After=network.target
+
+      [Service]
+      Type=simple
+      WorkingDirectory={{ psiphon_dir }}
+      # Añadimos variables para que Go no se confunda con las rutas
+      Environment=HOME=/home/{{ target_user }}
+      Environment=GOPATH=/home/{{ target_user }}/go
+      # Forzamos a que no use colores ANSI que rompen el log
+      Environment=TERM=dumb
+      ExecStart={{ psiphon_bin_path }}
+      Restart=always
+      RestartSec=10
+      # Evitamos que el log se llene de basura binaria
+      StandardOutput=journal
+      StandardError=journal
+
+      [Install]
+      WantedBy=default.target
+
+- name: Recargar daemon de systemd de usuario y habilitar servicio
+  become: true
+  become_user: "{{ target_user }}"
+  systemd:
+    name: psiphon-brainfuck
+    scope: user
+    daemon_reload: yes
+    enabled: yes
+    state: started

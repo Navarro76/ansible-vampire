@@ -1,0 +1,34 @@
+---
+- name: Detener y deshabilitar el servicio de usuario
+  systemd:
+    name: psiphon-brainfuck.service
+    scope: user
+    state: stopped
+    enabled: no
+  become_user: "{{ target_user }}"
+  ignore_errors: yes
+
+- name: Eliminar el archivo del servicio systemd
+  file:
+    path: "/home/{{ target_user }}/.config/systemd/user/psiphon-brainfuck.service"
+    state: absent
+
+- name: Recargar el daemon de systemd del usuario (Usando el módulo correcto)
+  systemd:
+    daemon_reload: yes
+    scope: user
+  become_user: "{{ target_user }}"
+
+- name: Eliminar directorios de código fuente y binarios
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/home/{{ target_user }}/go/src/github.com/aztecrabbit"
+    - "/home/{{ target_user }}/go/src/github.com/Psiphon-Labs"
+    - "/home/{{ target_user }}/.config/brainfuck-psiphon-pro-go"
+
+- name: Matar procesos remanentes
+  shell: "pkill -u {{ target_user }} -f 'brainfuck-psiphon|psiphon-tunnel-core'"
+  ignore_errors: yes
+  become: true

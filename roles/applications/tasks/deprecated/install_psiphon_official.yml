@@ -1,0 +1,54 @@
+---
+- name: Crear directorio para el Core de Psiphon
+  file:
+    path: "{{ target_home }}/psiphon-official"
+    state: directory
+    mode: '0755'
+
+- name: Descargar binario oficial de Psiphon-Labs (64-bit)
+  get_url:
+    url: "https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries/raw/master/linux/psiphon-tunnel-core-x86_64"
+    dest: "{{ target_home }}/psiphon-official/psiphon-tunnel-core"
+    mode: '0755'
+
+- name: Crear archivo de configuración para el Core Oficial
+  become_user: "{{ target_user }}"
+  copy:
+    dest: "{{ target_home }}/psiphon-official/psiphon.config"
+    content: |
+      {
+        "LocalSocksProxyPort": 1080,
+        "LocalHttpProxyPort": 8080,
+        "PropagationChannelId": "A6174A64C2E94A91",
+        "SponsorId": "6516109489620580",
+        "TunnelProtocol": "SSH",
+        "Region": ""
+      }
+
+- name: Crear servicio de Systemd para el Core Oficial
+  copy:
+    dest: "{{ target_home }}/.config/systemd/user/psiphon-official.service"
+    content: |
+      [Unit]
+      Description=Psiphon Official Tunnel Core
+      After=network.target
+
+      [Service]
+      Type=simple
+      WorkingDirectory={{ target_home }}/psiphon-official
+      ExecStart={{ target_home }}/psiphon-official/psiphon-tunnel-core -config psiphon.config
+      Restart=always
+      RestartSec=10
+      StandardOutput=journal
+      StandardError=journal
+
+      [Install]
+      WantedBy=default.target
+
+- name: Iniciar servicio oficial de Psiphon
+  systemd:
+    name: psiphon-official.service
+    scope: user
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

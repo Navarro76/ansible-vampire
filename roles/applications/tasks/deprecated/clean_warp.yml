@@ -1,0 +1,28 @@
+---
+# Solo incluimos la lista de tareas, sin 'hosts' ni 'tasks:'
+- name: Detener y deshabilitar el servicio warp-svc
+  ansible.builtin.systemd:
+    name: warp-svc
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Eliminar el paquete cloudflare-warp
+  ansible.builtin.apt:
+    name: cloudflare-warp
+    state: absent
+    purge: yes
+
+- name: Eliminar el archivo del repositorio
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/cloudflare-client.list
+    state: absent
+
+- name: Eliminar la llave GPG de Cloudflare
+  ansible.builtin.file:
+    path: /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+    state: absent
+
+- name: Actualizar la caché de apt
+  ansible.builtin.apt:
+    update_cache: yes

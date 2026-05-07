@@ -1,0 +1,8 @@
+---
+
+# Aplicaciones para imágenes
+- name: Instalar aplicaciones para imágenes
+  apt:
+    name: "{{ image_apps }}"
+    state: present
+    update_cache: yes

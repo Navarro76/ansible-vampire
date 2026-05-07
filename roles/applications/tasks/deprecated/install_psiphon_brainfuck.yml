@@ -1,0 +1,83 @@
+---
+- name: Instalar dependencias para Psiphon Brainfuck
+  apt:
+    name: [golang, git, redsocks]
+    state: present
+
+- name: Limpiar directorios inconsistentes y asegurar carpetas base
+  shell: |
+    for DIR in "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go" "/home/{{ target_user }}/go/src/github.com/Psiphon-Labs/psiphon-tunnel-core"; do
+      if [ -d "$DIR" ] && [ ! -d "$DIR/.git" ]; then rm -rf "$DIR"; fi
+      mkdir -p "$(dirname "$DIR")"
+    done
+  become: true
+
+- name: Clonar repositorios mediante Shell (Resistente a Error 500)
+  become_user: "{{ target_user }}"
+  shell: |
+    if [ ! -d "{{ item.dest }}/.git" ]; then
+      git clone {{ item.repo }} {{ item.dest }}
+    else
+      cd {{ item.dest }} && git pull
+    fi
+  loop:
+    - { repo: "https://github.com/aztecrabbit/brainfuck-psiphon-pro-go.git", dest: "{{ psiphon_dir }}" }
+    - { repo: "https://github.com/Psiphon-Labs/psiphon-tunnel-core.git", dest: "/home/{{ target_user }}/go/src/github.com/Psiphon-Labs/psiphon-tunnel-core" }
+  register: git_shell_result
+  until: git_shell_result.rc == 0
+  retries: 5
+  delay: 15
+
+#- name: Compilar Psiphon Tunnel Core
+#  become_user: "{{ target_user }}"
+#  shell: |
+#    cd /home/{{ target_user }}/go/src/github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient
+#    # Usamos build en lugar de install para dejar el binario en la carpeta del proyecto
+#    go build -ldflags "-s -w" -o {{ psiphon_dir }}/psiphon-tunnel-core
+#  args:
+#    creates: "{{ psiphon_dir }}/psiphon-tunnel-core"
+
+- name: Compilar Psiphon Tunnel Core (ConsoleClient)
+  become_user: "{{ target_user }}"
+  shell: |
+    cd /home/{{ target_user }}/go/src/github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient
+    # Inicializar módulo si no existe (Psiphon Core suele tenerlo, pero por seguridad)
+    [ ! -f go.mod ] && go mod init github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient || true
+    go mod tidy
+    go build -ldflags "-s -w" -o {{ psiphon_dir }}/psiphon-tunnel-core
+  args:
+    creates: "{{ psiphon_dir }}/psiphon-tunnel-core"
+
+- name: Compilar Brainfuck Psiphon
+  become_user: "{{ target_user }}"
+  shell: |
+    cd {{ psiphon_dir }}
+    # Crear el archivo de módulo necesario para Go 1.17+
+    [ ! -f go.mod ] && go mod init github.com/aztecrabbit/brainfuck-psiphon-pro-go || true
+    go mod tidy
+    go build -ldflags "-s -w" -o brainfuck-psiphon-pro-go
+  args:
+    creates: "{{ psiphon_dir }}/brainfuck-psiphon-pro-go"
+
+- name: Configurar config.json
+  become_user: "{{ target_user }}"
+  copy:
+    dest: "{{ psiphon_dir }}/config.json"
+    content: |
+      {
+        "ListenPort": 1080,
+        "PsiphonCore": 1,
+        "Psiphon": {
+          "CoreName": "psiphon-tunnel-core",
+          "Tunnel": 4,
+          "Region": "US",
+          "Protocols": ["FRONTED-MEEK-OSSH"],
+          "TunnelWorkers": 4,
+          "KuotaDataLimit": 0,
+          "Authorizations": []
+        },
+        "Rules": {
+          "*:*": ["*"]
+        }
+      }
+

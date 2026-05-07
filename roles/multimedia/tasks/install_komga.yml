@@ -1,0 +1,49 @@
+---
+
+# 1. Crear la estructura de directorios en la partición de datos
+- name: Crear directorios para Komga en partición de datos
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+  loop:
+    - "/mnt/Datos/Docker"
+    - "/mnt/Datos/Docker/komga"
+    - "/mnt/Datos/Docker/komga/config"
+
+# 2. Desplegar el docker-compose.yml
+- name: Desplegar docker-compose.yml para Komga
+  become: true
+  copy:
+    dest: "/mnt/Datos/Docker/komga/docker-compose.yml"
+    content: |
+      services:
+        komga:
+          image: gotson/komga:latest
+          container_name: komga
+          network_mode: "host" # Usa la red directa de tu Debian
+          user: "1000:1000"
+          environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=America/Mexico_City
+          volumes:
+            - /mnt/Datos/Docker/komga/config:/config
+            - /mnt/Datos/MANGAS:/data
+          ports:
+            - 25600:8080
+          restart: unless-stopped
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0644'
+
+# 3. Levantar el servicio
+- name: Levantar contenedor de Komga
+  become: true
+  shell:
+    cmd: docker compose up -d
+    chdir: "/mnt/Datos/Docker/komga"
+

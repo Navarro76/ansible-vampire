@@ -1,0 +1,24 @@
+---
+
+- name: "Instalar aplicaciones para leer libros para {{ target_user }}"
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    method: user
+    remote: flathub
+  loop: "{{ flatpak_ebookreader | default([]) }}"
+
+- name: "Actualizar todas las aplicaciones de {{ target_user }}"
+  command: flatpak update --user -y
+  when: flatpak_update | default(true)
+  register: update_output
+  changed_when: "'Installing' in update_output.stdout or 'Updating' in update_output.stdout"
+
+# Overrides (Solo si defines permisos específicos)
+#- name: Aplicar permisos personalizados de Flatpak
+#  command: "flatpak override --user {{ item.permissions }} {{ item.app }}"
+#  loop: "{{ flatpak_overrides }}"
+#  when: flatpak_overrides | length > 0
+  # Esto evita que Ansible marque "changed" si no hubo cambios reales (opcional pero recomendado)
+#  changed_when: false
+

@@ -1,0 +1,20 @@
+---
+
+- name: Descargar y extraer el binario de Zellij
+  ansible.builtin.unarchive:
+    src: "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+- name: Obtener la versión instalada de Zellij
+  ansible.builtin.command: zellij --version
+  register: zellij_version_output
+  changed_when: false
+
+- name: Mostrar la versión instalada
+  ansible.builtin.debug:
+    msg: "Instalación completada: {{ zellij_version_output.stdout }}"

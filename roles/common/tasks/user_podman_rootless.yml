@@ -1,0 +1,78 @@
+---
+
+# ========== Configurar Podman Rootless y Quadlets ==========
+
+# ESTA TAREA REQUIERE ROOT
+- name: Configurar subuid/subgid para el usuario
+  become: true
+  lineinfile:
+    path: "{{ item }}"
+    line: "{{ target_user }}:100000:65536"
+    create: yes
+  loop:
+    - /etc/subuid
+    - /etc/subgid
+
+# LAS SIGUIENTES TAREAS DEBEN SER COMO USUARIO NORMAL
+- name: Crear directorio para Quadlets de usuario
+  file:
+    path: "/home/{{ target_user }}/.config/containers/systemd"
+    state: directory
+    mode: '0755'
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+
+- name: Crear archivo Quadlet .container
+  ansible.builtin.copy:
+    dest: "/home/{{ target_user }}/.config/containers/systemd/mpdris2.container"
+    content: |
+      [Unit]
+      Description=Puente MPD a D-Bus via Podman
+      # Evita que systemd se rinda si MPD tarda en responder
+      StartLimitIntervalSec=0
+
+      [Container]
+      Image=localhost/mpdris2-local
+      Volume=%t/bus:/run/user/1000/bus
+      Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+      Network=host
+      Exec=--host 127.0.0.1
+
+      [Service]
+      Restart=always
+      RestartSec=5s
+
+      [Install]
+      WantedBy=default.target
+    owner: "{{ target_user }}"
+    mode: '0644'
+  register: quadlet_created
+
+- name: Recargar systemd del usuario para que Quadlet genere el servicio real
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    scope: user
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/1000"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/1000/bus"
+  when: quadlet_created is defined and quadlet_created.changed
+
+- name: Habilitar linger para el usuario
+  ansible.builtin.command:
+    cmd: "loginctl enable-linger {{ target_user }}"
+    creates: "/var/lib/systemd/linger/{{ target_user }}"
+  become: true # Esto requiere privilegios de root
+  tags: [podman_rootless, linger]
+
+- name: Iniciar servicio mpdris2 (Generado por Quadlet)
+  ansible.builtin.shell: |
+    export XDG_RUNTIME_DIR=/run/user/1000
+    export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+    systemctl --user daemon-reload
+    systemctl --user start mpdris2
+  args:
+    executable: /bin/bash
+  # Usamos esto para que Ansible no marque error si ya estaba corriendo
+  failed_when: false
+  changed_when: false
+
