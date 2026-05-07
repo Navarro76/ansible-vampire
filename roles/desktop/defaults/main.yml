@@ -28,6 +28,7 @@ desktop_packages:
   - qt5ct
   - qt6ct
   - qt6-wayland
+  - hardinfo2
 
 wayland_dependencies:
   - wayland-protocols

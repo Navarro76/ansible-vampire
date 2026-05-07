@@ -22,5 +22,16 @@
   become: true
   tags: [common, zig]
 
+- import_tasks: install_docker.yml
+  become: true
+  tags: [common, install, docker, infra]
+
+- import_tasks: install_podman.yml
+  become: true
+  tags: [common, install, install_podman]
+
 # ========== Configuración de sistema ==========
+
+- import_tasks: user_podman_rootless.yml
+  tags: [common, install, podman_rootless]
 

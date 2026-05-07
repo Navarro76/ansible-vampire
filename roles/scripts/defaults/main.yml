@@ -11,3 +11,8 @@ bin_target: "{{ bin_scripts }}/target"
 hacker_whichSystem: "{{ hacker_scripts }}/whichSystem.py"
 hacker_screenshot: "{{ hacker_scripts }}/screenshot"
 hacker_fastTCPScan: "{{ hacker_scripts }}/fastTCPScan.go"
+
+# driver de Firefox para decargar mangas
+gecko_version: "v0.34.0"
+gecko_url: "https://github.com/mozilla/geckodriver/releases/download/{{ gecko_version }}/geckodriver-{{ gecko_version }}-linux64.tar.gz"
+install_path: "/usr/local/bin"

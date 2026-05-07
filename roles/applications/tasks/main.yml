@@ -24,11 +24,16 @@
   become: true
   tags: [applications, audio_recording]
 
-# APLICACIONES INDIVIDUALES
-
-- import_tasks: install_warp.yml
+- import_tasks: install_image.yml
   become: true
-  tags: [applications, warp]
+  tags: [applications, image]
+
+#- import_tasks: install_wine.yml
+#  become: true
+#  tags: [applications, wine]
+
+
+# APLICACIONES INDIVIDUALES
 
 - import_tasks: install_tor.yml
   become: true
@@ -60,4 +65,10 @@
   become: true
   become_user: "{{ target_user }}"
   tags: [applications, config_aria2]
+
+#- import_tasks: install_psiphon_official.yml
+#  become: true
+#  become_user: "{{ target_user }}"
+#  tags: [applications, psiphon_official]
+
 

@@ -19,14 +19,22 @@
 
       [Service]
       Type=simple
-      ExecStart=/bin/bash -c 'sleep 15 && source <(strings /proc/$(pgrep -x sway)/environ | grep DBUS_SESSION_BUS_ADDRESS) && exec /usr/local/bin/mpdris2-rs --host 127.0.0.1:6600'
-      Restart=on-failure
-      RestartSec=15
-      StartLimitIntervalSec=60
-      StartLimitBurst=3
-      # Optimización para apagado rápido (ALEX)
-      TimeoutStopSec=3
-      KillMode=process
+      # Variables críticas para que encuentre el bus de Sway
+      Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+      Environment=XDG_RUNTIME_DIR=/run/user/1000
+
+      # Espera a que MPD abra el puerto
+      ExecStartPre=/usr/bin/bash -c 'until ss -tulpn | grep -q :6600; do sleep 1; done'
+
+      # Ejecución
+      ExecStart=/usr/local/bin/mpdris2-rs --host 127.0.0.1:6600
+
+      # REINICIO AGRESIVO (La clave)
+      # "always" reinicia el servicio sin importar si salió con error o con éxito.
+      Restart=always
+      RestartSec=5s
+      # Elimina el límite de intentos para que no se rinda nunca
+      StartLimitIntervalSec=0
 
       [Install]
       WantedBy=default.target

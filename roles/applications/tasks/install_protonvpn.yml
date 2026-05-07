@@ -1,24 +1,29 @@
 ---
+- name: Limpiar instalaciones y archivos conflictivos previos
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/apt/sources.list.d/protonvpn.list"
+    - "/etc/apt/sources.list.d/protonvpn-stable.sources"
+    - "/usr/share/keyrings/protonvpn-archive-keyring.asc"
+    - "/usr/share/keyrings/protonvpn-stable-archive-keyring.gpg"
 
-- name: Descargar la llave GPG de ProtonVPN
+- name: Descargar el paquete de configuración del repositorio ProtonVPN (v1.0.8)
   ansible.builtin.get_url:
-    url: https://repo.protonvpn.com/debian/public_key.asc
-    dest: /usr/share/keyrings/protonvpn-archive-keyring.asc
+    url: https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
+    dest: /tmp/protonvpn-stable-release_1.0.8_all.deb
     mode: '0644'
+    checksum: sha256:0b14e71586b22e498eb20926c48c7b434b751149b1f2af9902ef1cfe6b03e180
 
-- name: Crear archivo de repositorio (Debian 13)
-  ansible.builtin.copy:
-    dest: /etc/apt/sources.list.d/protonvpn.list
-    content: "deb [signed-by=/usr/share/keyrings/protonvpn-archive-keyring.asc] https://repo.protonvpn.com/debian stable main"
-    mode: '0644'
-
-- name: Actualizar cache de apt
+- name: Instalar el paquete de repositorio de ProtonVPN
   ansible.builtin.apt:
-    update_cache: yes
+    deb: /tmp/protonvpn-stable-release_1.0.8_all.deb
 
-- name: Instalar Proton-VPN CLI
+- name: Actualizar cache de apt e instalar Proton VPN GUI y CLI
   ansible.builtin.apt:
     name:
-      - proton-vpn-cli
       - proton-vpn-gnome-desktop
+      - proton-vpn-cli
     state: present
+    update_cache: yes

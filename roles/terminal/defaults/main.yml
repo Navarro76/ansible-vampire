@@ -30,3 +30,6 @@ terminal_packages:
   - unzip
   - tree
   - btm
+  - nvtop
+  - inxi
+

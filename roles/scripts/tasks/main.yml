@@ -9,10 +9,17 @@
   become: true
   tags: [scripts, install]
 
+- import_tasks: setup_python_imaging.yml
+  become: true
+  tags: [scripts, python_imaging]
+
+- import_tasks: setup_python_manga_download.yml
+  become: true
+  tags: [scripts, manga_download]
+
 # ========== Scripts para usuario ==========
 
 - import_tasks: user_s4vitar_network.yml
   become: true
   become_user: "{{ target_user }}"
   tags: [scripts, install, user]
-

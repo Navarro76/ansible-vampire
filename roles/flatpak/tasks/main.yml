@@ -25,6 +25,11 @@
   become_user: "{{ target_user }}"
   tags: [flatpak, user, flatpak_apps]
 
+- import_tasks: user_flatpak_ebookreader.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_ebookreader]
+
 - import_tasks: user_flatpak_games.yml
   become: true
   become_user: "{{ target_user }}"
@@ -34,6 +39,16 @@
   become: true
   become_user: "{{ target_user }}"
   tags: [flatpak, user, flatpak_network]
+
+- import_tasks: user_flatpak_audio.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_audio]
+
+- import_tasks: user_flatpak_audio_recording.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_audio_recording]
 
 - import_tasks: user_xdg_portal_wlr.yml
   become: true

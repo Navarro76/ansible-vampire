@@ -21,6 +21,11 @@ typst_create_wrapper: false
 # Typst preview
 typst_preview: "none"          # none | cli | nvim | gui
 
+# Variables Psiphon
+#psiphon_dir: "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go"
+#psiphon_core_repo: "github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient"
+#psiphon_brainfuck_repo: "github.com/aztecrabbit/brainfuck-psiphon-pro-go"
+#psiphon_bin_path: "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go/brainfuck-psiphon-pro-go"
 
 # (firmware, drivers de aceleración de video)
 graphics_packages:
@@ -50,15 +55,26 @@ creativity_apps:
 
 # (DAWs, plugins externos LSP y Calf)
 audio_recording_apps:
-  - easyeffects
-  - lsp-plugins
-  - calf-plugins
-  - mda-lv2
-  - zam-plugins
+  - libavcodec-extra
+#  - easyeffects
+#  - lsp-plugins
+#  - calf-plugins
+#  - mda-lv2
+#  - zam-plugins
+
+audio_apps:
+  - pragha
+  - audacious
+
+image_apps:
+  - python3
+  - python3-pil
 
 # (optimizers, backup tools, virtualization)
 system_tools_apps:
   - vainfo
+  - lm-sensors
+#  - gnome-disk-utility (danger)
 
 # (browsers, email clients)
 internet_apps:
@@ -74,6 +90,7 @@ download_apps:
   - amule-utils-gui
   - amule-gnome-support
   - qbittorrent
+  - transmission
 
 # (IDEs, code editors, databases, revision control)
 development_apps:
@@ -90,11 +107,13 @@ multimedia_apps:
 
 # (emulators, DOSBox-X)
 gaming_apps:
+  - aisleriot
 
-# (Firewalls, password managers)
+# (Firewalls, password managers, vpn)
 security_apps:
   - nftables
   - keepassxc-full
+#  - riseup-vpn  (pendiente)
 
 # APPS CON PROBLEMAS
   - foliate

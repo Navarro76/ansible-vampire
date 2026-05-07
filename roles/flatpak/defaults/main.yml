@@ -12,27 +12,47 @@ flatpak_runtimes:
 flatpak_apps:
   - com.github.marktext.marktext
   - org.gnome.Loupe
-  - com.calibre_ebook.calibre
-  - info.febvre.Komikku
-  - net.sourceforge.mcomix
   - com.zettlr.Zettlr
   - md.obsidian.Obsidian
-  - org.onlyoffice.desktopeditors
+#  - org.onlyoffice.desktopeditors
   - org.librepcb.LibrePCB
 
+flatpak_ebookreader:
+#  - com.calibre_ebook.calibre
+#  - net.sourceforge.mcomix
+  - info.febvre.Komikku
+  - com.yacreader.YACReader
+
 flatpak_games:
-  - com.usebottles.bottles
-  - org.libretro.RetroArch
-  - com.dosbox_x.DOSBox-X
-  - io.github.dosbox-staging
-  - net.pcsx2.PCSX2
-  - net.rpcs3.RPCS3
+  - net.lutris.Lutris
+#  - com.usebottles.bottles
+#  - org.libretro.RetroArch
+#  - com.dosbox_x.DOSBox-X
+#  - io.github.dosbox-staging
+#  - net.pcsx2.PCSX2
+#  - net.rpcs3.RPCS3
+
+flatpak_download:
+  - org.freedownloadmanager.Manager
 
 flatpak_network:
   - io.gitlab.librewolf-community
 
 flatpak_audio:
   - me.timschneeberger.jdsp4linux
+
+flatpak_audio_recording:
+  - org.ardour.Ardour
+  - org.zrythm.Zrythm
+#  - com.ntrack.n-track
+#  - com.bitwig.BitwigStudio
+
+flatpak_plugins_audio:
+  - org.freedesktop.LinuxAudio.Plugins.Calf
+  - org.freedesktop.LinuxAudio.Plugins.Surge-XT
+  - org.freedesktop.LinuxAudio.Plugins.Cardinal
+  - org.freedesktop.LinuxAudio.Plugins.Yoshimi
+  - org.freedesktop.LinuxAudio.Plugins.guitarixvst
 
 # Controla si se actualizan las apps del usuario automáticamente
 flatpak_update: true
@@ -41,7 +61,10 @@ flatpak_update: true
 #  - "--filesystem=home com.visualstudio.code"
 #  - "--filesystem=xdg-download com.spotify.Client"
 #  - "--socket=system-bus com.example.App"
-flatpak_overrides: []
+
+flatpak_overrides:
+  - app: "net.lutris.Lutris"
+    permissions: "--filesystem=/media:ro --filesystem=/run/media:ro --socket=x11"
 
 # aplicaciones con problemas con Wayland/WLroots
 #  - com.github.johnfactotum.Foliate (funiconó, pero instalé con apt

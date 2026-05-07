@@ -13,6 +13,10 @@
 #  become: true
 #  tags: [multimedia, install, deadbeef]
 
+- import_tasks: install_komga.yml
+  become: true
+  tags: [multimedia, install, user, kogma]
+
 # ========== Configuración de root ==========
 
 - import_tasks: root_rtkit.yml
@@ -56,3 +60,4 @@
   become: true
   become_user: "{{ target_user }}"
   tags: [multimedia, install, user, rmpc]
+
