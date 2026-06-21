@@ -1,0 +1,9 @@
+---
+
+# Firmware, drivers de aceleración de video 
+- name: Firmware, drivers de aceleración de video
+  apt:
+    name: "{{ graphics_packages }}"
+    state: present
+    update_cache: yes
+

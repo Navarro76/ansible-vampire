@@ -21,6 +21,11 @@ typst_create_wrapper: false
 # Typst preview
 typst_preview: "none"          # none | cli | nvim | gui
 
+# TV-Lite: ruta de tu repositorio de binarios (en el espacio de usuario)
+bin_path: "{{ role_path }}/files/bin"
+dest_bin_path: "/usr/local/bin/tv-lite"
+
+
 # Variables Psiphon
 #psiphon_dir: "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go"
 #psiphon_core_repo: "github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient"
@@ -104,6 +109,7 @@ multimedia_apps:
   - mkvtoolnix
   - mkvtoolnix-gui
   - mediainfo
+  - libmpv-dev
 
 # (emulators, DOSBox-X)
 gaming_apps:
@@ -113,6 +119,7 @@ gaming_apps:
 security_apps:
   - nftables
   - keepassxc-full
+  - libfido2-1
 #  - riseup-vpn  (pendiente)
 
 # APPS CON PROBLEMAS

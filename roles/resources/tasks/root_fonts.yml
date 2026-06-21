@@ -2,61 +2,89 @@
 #========== Fonts (/usr/share/fonts/opentype/) ========== 
 
 # Copiar fuentes OpenType
-- name: Verificar que el directorio de fuentes OpenType existe
-  stat:
-    path: "{{ fonts_opentype }}"
-  register: opentype_dir_stat
-
-- name: Copiar fuentes OpenType si existe el directorio
+- name: Copiar fuentes OpenType en /usr/share/fonts/opentype
   ansible.posix.synchronize:
     src: "{{ fonts_opentype }}/"
     dest: /usr/share/fonts/opentype/
-    archive: true
     recursive: true
     delete: false
-  when: opentype_dir_stat.stat.exists
+    # Rompemos 'archive' en sus partes individuales para controlar los permisos:
+    links: true
+    times: true
+    perms: false # Evita que copie los permisos de tu máquina local
+    owner: false # Evita que copie el dueño de tu máquina local
+    group: false # Evita que copie el grupo de tu máquina local
+    # Le decimos a rsync que aplique directamente las reglas de root y permisos correctos:
+    rsync_opts:
+      - "--chown=root:root"
+      - "--chmod=D0755,F0644"
+  # Un truco limpio: solo ejecuta si la variable de origen está definida y no está vacía
+  when: fonts_opentype is defined and fonts_opentype | length > 0
   register: opentype_fonts_copy_result
+  tags: [OpenType]
 
 # Copiar fuentes TrueType
-- name: Verificar que el directorio de fuentes TrueType existe
-  stat:
-    path: "{{ fonts_truetype }}"
-  register: truetype_dir_stat
-
 - name: Copiar fuentes TrueType en /usr/share/fonts/truetype
   ansible.posix.synchronize:
     src: "{{ fonts_truetype }}/"
     dest: /usr/share/fonts/truetype/
-    archive: true
     recursive: true
     delete: false
-  when: truetype_dir_stat.stat.exists
+    links: true
+    times: true
+    perms: false
+    owner: false
+    group: false
+    rsync_opts:
+      - "--chown=root:root"
+      - "--chmod=D0755,F0644"
+  when: fonts_truetype is defined and fonts_truetype | length > 0
   register: truetype_fonts_copy_result
+  tags: [TrueType]
 
 # Permisos de fuentes
 - set_fact:
     font_dirs:
       - /usr/share/fonts/truetype
       - /usr/share/fonts/opentype
+  tags: [OpenType, TrueType]
 
+# 1. Buscamos los directorios de fuentes
+- name: Encontrar directorios de fuentes
+  ansible.builtin.find:
+    paths: "{{ font_dirs }}"
+    file_type: directory
+    recurse: yes
+  register: fonts_dirs_found
+  tags: [OpenType, TrueType]
+
+# 2. Corregimos directorios (Solo si difieren)
 - name: Ajustar permisos de directorios de fuentes
   ansible.builtin.file:
-    path: "{{ item }}"
-    recurse: yes
+    path: "{{ item.path }}"
     state: directory
     owner: root
     group: root
     mode: '0755'
-  loop: "{{ font_dirs }}"
+  loop: "{{ fonts_dirs_found.files }}"
+  # Corrección: Usamos pw_name, gr_name y el formato '755' que devuelve find
+  when: >
+    item.pw_name != 'root' or
+    item.gr_name != 'root' or
+    item.mode != '755'
+  tags: [OpenType, TrueType]
 
+# 3. Encontrar TODOS los archivos de fuentes
 - name: Encontrar archivos de fuentes
   ansible.builtin.find:
-    paths: "{{ item }}"
+    paths: "{{ font_dirs }}"
     recurse: yes
     file_type: file
   loop: "{{ font_dirs }}"
   register: fonts_files
+  tags: [OpenType, TrueType]
 
+# 4. Aplicar permisos a los archivos (Solo si difieren)
 - name: Aplicar permisos 644 a archivos de fuentes
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -64,6 +92,12 @@
     group: root
     mode: '0644'
   loop: "{{ fonts_files.results | map(attribute='files') | flatten }}"
+  # Corrección: Misma lógica con las propiedades reales de find
+  when: >
+    item.pw_name != 'root' or
+    item.gr_name != 'root' or
+    item.mode != '644'
+  tags: [OpenType, TrueType]
 
 # Actualizar caché de fuentes (sólo si cambiaron fuentes)
 - name: Recargar caché de fuentes sólo si se copiaron nuevas
@@ -71,4 +105,4 @@
   when: >
     opentype_fonts_copy_result is changed or
     truetype_fonts_copy_result is changed
-
+  tags: [OpenType, TrueType]

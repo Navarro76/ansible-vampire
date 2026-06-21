@@ -1,0 +1,182 @@
+---
+
+# ==============================================================================
+# CONFIGURACIÓN INICIAL Y DEPENDENCIAS (Ejecutado como root)
+# ==============================================================================
+- name: Instalar dependencias del sistema y cabeceras de Python para ffsubsync
+  apt:
+    name:
+      - ffmpeg
+      - libmpv-dev
+      - pipx
+      - python3-dev
+      - build-essential
+    state: present
+    update_cache: yes
+  become: true
+
+# ==============================================================================
+# INSTALACIÓN DE FFSUBSYNC (Ejecutado como el usuario alex)
+# ==============================================================================
+- name: Configurar e instalar ffsubsync con pipx
+  block:
+    - name: Asegurar que los binarios locales estén en el PATH de alex
+      shell: pipx ensurepath
+      args:
+        executable: /bin/bash
+
+    - name: Instalar o actualizar ffsubsync mediante pipx
+      community.general.pipx:
+        name: ffsubsync
+        state: install
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [subtitles, ffsubsync]
+
+# ==============================================================================
+# GESTIÓN DE ALASS, SUBTITLE EDIT Y SUBTITLE COMPOSER
+# ==============================================================================
+- name: Descarga y despliegue de aplicaciones de subtítulos
+  block:
+    - name: Asegurar que el directorio de descargas existe
+      file:
+        path: /mnt/Nueva/Applications/AppImage/Subtitles
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: '0755'
+
+    # --------------------------------------------------------------------------
+    # ALASS
+    # --------------------------------------------------------------------------
+    - name: Obtener última release de ALASS desde GitHub
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/kaegi/alass/releases/latest
+        return_content: yes
+      register: alass_github
+
+    - name: Descargar binario de ALASS si hay versión nueva
+      get_url:
+        url: "{{ (alass_github.json.assets | selectattr('name', 'equalto', 'alass-linux64') | first).browser_download_url }}"
+        dest: /mnt/Nueva/Applications/AppImage/Subtitles/alass-linux64
+        mode: '0755'
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+      register: alass_download
+
+    # --------------------------------------------------------------------------
+    # SUBTITLE EDIT (Soporte para Betas/Pre-releases)
+    # --------------------------------------------------------------------------
+    - name: Obtener la lista de todas las releases de Subtitle Edit (incluye betas)
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/SubtitleEdit/subtitleedit/releases
+        return_content: yes
+      register: se_releases
+
+    - name: Descargar tarball de Subtitle Edit (Última versión/beta disponible)
+      get_url:
+        # Buscamos en la primera release [0] de la lista, el asset llamado exactamente 'SubtitleEdit-Linux-x64.tar.gz'
+        url: "{{ (se_releases.json[0].assets | selectattr('name', 'equalto', 'SubtitleEdit-Linux-x64.tar.gz') | first).browser_download_url }}"
+        dest: /mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit-Linux-x64.tar.gz
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+      register: se_download
+
+    - name: Crear directorio para Subtitle Edit
+      file:
+        path: /mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: '0755'
+
+    - name: Extraer Subtitle Edit si se descargó una versión nueva
+      unarchive:
+        src: /mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit-Linux-x64.tar.gz
+        dest: /mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit
+        remote_src: yes
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+      when: se_download.changed
+
+    # --------------------------------------------------------------------------
+    # SUBTITLE COMPOSER
+    # --------------------------------------------------------------------------
+    - name: Obtener última release de Subtitle Composer desde GitHub
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/maxrd2/subtitlecomposer/releases/latest
+        return_content: yes
+      register: sc_github
+
+    - name: Descargar AppImage de Subtitle Composer si hay versión nueva
+      get_url:
+        url: "{{ (sc_github.json.assets | selectattr('name', 'search', 'x86_64\\.AppImage$') | first).browser_download_url }}"
+        dest: /mnt/Nueva/Applications/AppImage/Subtitles/Subtitle_Composer-x86_64.AppImage
+        mode: '0755'
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    # --------------------------------------------------------------------------
+    # ARCHIVOS .DESKTOP (Usuario alex)
+    # --------------------------------------------------------------------------
+    - name: Asegurar directorio de aplicaciones del usuario alex
+      file:
+        path: "/home/{{ target_user }}/.local/share/applications"
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: '0755'
+
+    - name: Crear .desktop para Subtitle Edit
+      copy:
+        dest: "/home/{{ target_user }}/.local/share/applications/subtitleedit.desktop"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Name=Subtitle Edit
+          GenericName=Editor de Subtítulos
+          Comment=Editor avanzado de subtítulos para sincronización y maquetación (typesetting)
+          Exec=/mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit/SubtitleEdit %f
+          Path=/mnt/Nueva/Applications/AppImage/Subtitles/SubtitleEdit/
+          Icon=/mnt/Nueva/Applications/AppImage/Iconos/Subtitleedit.svg
+          Terminal=false
+          Type=Application
+          Categories=AudioVideo;Video;AudioVideoEditing;
+          MimeType=application/x-subrip;text/vtt;application/x-ass;application/x-ssa;
+
+    - name: Crear .desktop para Subtitle Composer
+      copy:
+        dest: "/home/{{ target_user }}/.local/share/applications/subtitlecomposer.desktop"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Name=Subtitle Composer
+          GenericName=Editor de Subtítulos (Qt)
+          Comment=Editor de subtítulos basado en text-step para sincronización y traducción masiva
+          Exec="/mnt/Nueva/Applications/AppImage/Subtitles/Subtitle_Composer-x86_64.AppImage" %f
+          Icon=subtitlecomposer
+          Terminal=false
+          Type=Application
+          Categories=AudioVideo;Video;AudioVideoEditing;
+          MimeType=application/x-subrip;text/vtt;application/x-ass;application/x-ssa;
+
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [subtitles, apps]
+
+# ==============================================================================
+# PROCESOS GLOBALES QUE REQUIEREN ROOT (Copiar alass a /usr/local/bin)
+# ==============================================================================
+- name: Copiar binario de ALASS al PATH global corporativo
+  copy:
+    src: /mnt/Nueva/Applications/AppImage/Subtitles/alass-linux64
+    dest: /usr/local/bin/alass
+    mode: '0755'
+    remote_src: yes
+  become: true
+  when: alass_download.changed
+  tags: [subtitles, alass]

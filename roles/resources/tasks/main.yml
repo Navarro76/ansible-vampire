@@ -11,14 +11,18 @@
 
 - import_tasks: system_fonts.yml
   become: true
-  tags: [resources, fonts]
+  tags: [resources, fonts, system_fonts]
+
+- import_tasks: install_font_packages.yml
+  become: true
+  tags: [resources, fonts, font_packages]
 
 # ========== recursos para root ==========
 
 - import_tasks: root_fonts.yml
   become: true
   become_user: root
-  tags: [resources, fonts]
+  tags: [resources, fonts, root_fonts]
 
 - import_tasks: root_grub.yml
   become: true

@@ -1,0 +1,31 @@
+---
+# Frogmouth (visor/navegador Markdown para la terminal, construido con Textual)
+
+# ==============================================================================
+# INSTALACIÓN DE PIPX y PYTHON3-PIP (Ejecutado como root)
+# ==============================================================================
+
+- name: Asegurar que pipx y python3-pip estén instalados en el sistema
+  ansible.builtin.package:
+    name:
+      - python3-pip
+      - pipx
+    state: present
+  become: true
+
+# ==============================================================================
+# INSTALACIÓN DE FROGMOUTH (Ejecutado como el usuario alex)
+# ==============================================================================
+
+- name: Instalar Frogmouth en el entorno del usuario
+  community.general.pipx:
+    name: frogmouth
+    state: present
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Asegurar que el PATH de pipx esté configurado (.local/bin)
+  ansible.builtin.command: pipx ensurepath
+  changed_when: false
+  become: true
+  become_user: "{{ target_user }}"

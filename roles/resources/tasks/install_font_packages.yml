@@ -1,0 +1,7 @@
+---
+
+- name: Instalar fuentes
+  apt:
+    name: "{{ font_packages }}"
+    state: present
+    update_cache: yes

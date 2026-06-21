@@ -29,6 +29,7 @@ desktop_packages:
   - qt6ct
   - qt6-wayland
   - hardinfo2
+  - gtk2-engines-murrine
 
 wayland_dependencies:
   - wayland-protocols

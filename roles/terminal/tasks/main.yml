@@ -61,4 +61,7 @@
   become_user: "{{ target_user }}"
   tags: [terminal, user, tmux]
 
+- import_tasks: install_frogmouth.yml
+  tags: [terminal, user, frogmouth]
+
 # ========== Configuración de sistema ==========

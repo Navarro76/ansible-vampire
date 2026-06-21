@@ -28,9 +28,16 @@
   become: true
   tags: [applications, image]
 
+- import_tasks: install_subtitle_apps.yml
+  tags: [applications, subtitles]
+
 #- import_tasks: install_wine.yml
 #  become: true
 #  tags: [applications, wine]
+
+- import_tasks: install_graphics_packages.yml
+  become: true
+  tags: [applications, graphics_packages]
 
 
 # APLICACIONES INDIVIDUALES
@@ -66,9 +73,11 @@
   become_user: "{{ target_user }}"
   tags: [applications, config_aria2]
 
+- import_tasks: install_tv_lite.yml
+  become: true
+  tags: [applications, tv-lite]
+
 #- import_tasks: install_psiphon_official.yml
 #  become: true
 #  become_user: "{{ target_user }}"
 #  tags: [applications, psiphon_official]
-
-

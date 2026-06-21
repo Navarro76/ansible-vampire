@@ -17,3 +17,5 @@ web_greeter_themes: "{{ resources_dir }}/web-greeter/themes"
 grub_theme_dir: "{{ resources_dir }}/grub/themes/dracula"
 grub_config: "{{ resources_dir }}/grub/grub"
 
+font_packages:
+  - fonts-noto-color-emoji

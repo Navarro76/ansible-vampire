@@ -1,0 +1,39 @@
+---bin_path: "{{ role_path }}/files/bin"
+
+- name: Verificar si el binario precompilado existe en el repositorio del rol
+  ansible.builtin.stat:
+    path: "{{ bin_path }}/tv-lite"
+  register: binario_respaldado
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Asegurar librerías de ejecución esenciales en el sistema anfitrión
+  ansible.builtin.apt:
+    name:
+      - libsqlite3-0
+      - libcurl4t64
+      - libgtk-3-0t64
+      - libwxgtk3.2-1t64
+      - libvlc5
+      - vlc-plugin-base
+      - vlc-plugin-video-output
+    state: present
+    install_recommends: false
+  when: binario_respaldado.stat.exists
+  tags: [tvlite-packages]
+  become: true
+
+- name: Copiar binario precompilado a la ruta del sistema
+  ansible.builtin.copy:
+    src: "{{ bin_path }}/tv-lite"
+    dest: "{{ dest_bin_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+  when: binario_respaldado.stat.exists
+  become: true
+
+- name: Informar si el binario no fue encontrado
+  ansible.builtin.debug:
+    msg: "El binario de TV-Lite no existe en el repositorio local. Saltando instalación."
+  when: not binario_respaldado.stat.exists
