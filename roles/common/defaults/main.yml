@@ -20,7 +20,6 @@ common_env_packages:
   - clang
   - yasm
   - intltool
-  - pkg-config
   - libjansson-dev
   - libblocksruntime-dev
 
@@ -37,3 +36,7 @@ common_extra_packages:
   - acl
   - ntfs-3g
   - exfat-fuse
+  - ratbagd
+  - piper
+  - evtest
+  - libevdev-tools

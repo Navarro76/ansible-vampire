@@ -1,0 +1,19 @@
+---
+
+- name: Configurar Timeout de apagado en systemd (Sistema)
+  ansible.builtin.ini_file:
+    path: /etc/systemd/system.conf
+    section: Manager
+    option: DefaultTimeoutStopSec
+    value: "10s"
+    mode: '0644'
+  notify: Reload systemd system
+
+- name: Configurar Timeout de apagado en systemd (Usuario)
+  ansible.builtin.ini_file:
+    path: /etc/systemd/user.conf
+    section: Manager
+    option: DefaultTimeoutStopSec
+    value: "10s"
+    mode: '0644'
+  notify: Reload systemd user

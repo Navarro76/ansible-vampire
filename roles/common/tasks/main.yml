@@ -35,3 +35,7 @@
 - import_tasks: user_podman_rootless.yml
   tags: [common, install, podman_rootless]
 
+- name: Configurar timeouts de systemd
+  ansible.builtin.import_tasks: config_timeout.yml
+  become: true
+  tags: [common, config, timeout]
