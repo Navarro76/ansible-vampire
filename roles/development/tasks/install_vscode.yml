@@ -1,0 +1,58 @@
+---
+- name: Verificar si existe el paquete .deb local de respaldo
+  stat:
+    path: "{{ vscode_deb_path }}"
+  register: vscode_local_deb
+  tags: [desktop, install, vscode]
+
+- name: Intentar configurar el repositorio APT oficial de Microsoft (deb822)
+  block:
+    - name: Asegurar que wget y gpg estén instalados
+      apt:
+        name:
+          - wget
+          - gpg
+        state: present
+
+    - name: Descargar y desarmar la clave GPG de Microsoft
+      shell: |
+        set -o pipefail
+        wget -qO- {{ vscode_gpg_url }} | gpg --dearmor -o {{ vscode_keyring_path }}
+      args:
+        creates: "{{ vscode_keyring_path }}"
+        executable: /bin/bash
+
+    - name: Crear archivo de fuentes deb822 (/etc/apt/sources.list.d/vscode.sources)
+      copy:
+        dest: /etc/apt/sources.list.d/vscode.sources
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          Types: deb
+          URIs: https://packages.microsoft.com/repos/code
+          Suites: stable
+          Components: main
+          Architectures: amd64,arm64,armhf
+          Signed-By: {{ vscode_keyring_path }}
+
+    - name: Actualizar caché e instalar o actualizar VS Code desde el repositorio
+      apt:
+        name: code
+        state: latest
+        update_cache: yes
+      register: vscode_online_install
+
+  rescue:
+    - name: Notificar que no hay acceso al repositorio oficial (Modo Offline)
+      debug:
+        msg: "No se pudo conectar al repositorio de Microsoft. Se procederá a usar el archivo .deb local..."
+
+- name: Instalar VS Code desde el paquete .deb local (Fallback sin conexión)
+  apt:
+    deb: "{{ vscode_deb_path }}"
+    state: present
+  when:
+    - vscode_online_install is failed or vscode_online_install is skipped
+    - vscode_local_deb.stat.exists
+  tags: [desktop, install, vscode]

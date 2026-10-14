@@ -1,0 +1,79 @@
+---
+# ==============================================================================
+# 1. TAREAS A NIVEL DE SISTEMA (Como ROOT)
+# ==============================================================================
+
+- name: Instalar dependencias del sistema para compilación y comunicación serie
+  apt:
+    name:
+      - git
+      - python3
+      - python3-pip
+      - python3-venv
+      - cmake
+      - ninja-build
+      - ccache
+      - libusb-1.0-0
+      - curl
+    state: present
+  tags: [desktop, install, esp_idf, deps]
+
+- name: Agregar al usuario {{ target_user }} al grupo dialout (acceso a /dev/ttyUSB* /dev/ttyACM*)
+  user:
+    name: "{{ target_user }}"
+    groups: dialout
+    append: yes
+  tags: [desktop, install, esp_idf, user]
+
+- name: Crear directorio de llaves APT
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  tags: [desktop, install, esp_idf, apt]
+
+- name: Descargar la llave GPG de Espressif
+  get_url:
+    url: https://dl.espressif.com/dl/eim/eim.gpg
+    dest: "{{ espressif_keyring_path }}"
+    mode: '0644'
+  tags: [desktop, install, esp_idf, apt]
+
+- name: Agregar el repositorio de Espressif (deb822)
+  get_url:
+    url: https://dl.espressif.com/dl/eim/eim.sources
+    dest: "{{ espressif_sources_path }}"
+    mode: '0644'
+  tags: [desktop, install, esp_idf, apt]
+
+- name: Instalar la CLI de EIM (ESP-IDF Installation Manager)
+  apt:
+    name: eim-cli
+    update_cache: yes
+    state: present
+  tags: [desktop, install, esp_idf, eim]
+
+
+# ==============================================================================
+# 2. TAREAS A NIVEL DE USUARIO (Como 'alex')
+# ==============================================================================
+
+- name: Instalar ESP-IDF ({{ esp_idf_version }}) de forma desatendida via EIM para {{ target_user }}
+  become: true
+  become_user: "{{ target_user }}"
+  command: "eim install -i {{ esp_idf_version }}"
+  args:
+    creates: "/home/{{ target_user }}/.espressif/tools/eim_idf.json"
+  environment:
+    HOME: "/home/{{ target_user }}"
+  tags: [desktop, install, user, esp_idf]
+
+- name: Instalar la extensión oficial de ESP-IDF en VS Code para {{ target_user }}
+  become: true
+  become_user: "{{ target_user }}"
+  command: code --install-extension espressif.esp-idf-extension
+  register: vscode_esp_ext
+  changed_when: "'was successfully installed' in vscode_esp_ext.stdout"
+  environment:
+    HOME: "/home/{{ target_user }}"
+  tags: [desktop, install, user, vscode, esp_idf]

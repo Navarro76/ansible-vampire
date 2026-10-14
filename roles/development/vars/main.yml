@@ -1,0 +1,11 @@
+---
+# VS Code
+vscode_deb_filename: "code_1.140.0-1790759618_amd64.deb"
+vscode_deb_path: "{{ role_path }}/files/esp-idf/{{ vscode_deb_filename }}"
+vscode_gpg_url: "https://packages.microsoft.com/keys/microsoft.asc"
+vscode_keyring_path: "/usr/share/keyrings/microsoft.gpg"
+
+# ESP-IDF / EIM
+espressif_keyring_path: "/etc/apt/keyrings/eim.gpg"
+espressif_sources_path: "/etc/apt/sources.list.d/espressif.sources"
+esp_idf_version: "v6.1"

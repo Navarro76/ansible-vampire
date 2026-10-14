@@ -1,5 +1,11 @@
 ---
 
+# ===== SBUILD =====
+# Variables por defecto para el rol de desarrollo / sbuild
+chroot_distro: "trixie"
+chroot_dir: "/var/chroot/trixie-amd64"
+debs_output_dir: "/home/{{ target_user }}/Debs"
+
 # ===== SDKMAN =====
 sdkman_install: true
 sdkman_java_versions:

@@ -1,0 +1,78 @@
+---
+- name: Instalar dependencias para sbuild y herramientas de empaquetado
+  ansible.builtin.apt:
+    name:
+      - sbuild
+      - mmdebstrap
+      - dh-make
+      - devscripts
+      - git
+      - uidmap
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Agregar al usuario {{ target_user }} al grupo sbuild
+  ansible.builtin.user:
+    name: "{{ target_user }}"
+    groups: sbuild
+    append: yes
+  become: true
+
+- name: Crear directorio destino para guardar los archivos .deb resultantes
+  ansible.builtin.file:
+    path: "{{ debs_output_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+  become: true
+
+- name: Crear directorio base para los chroots
+  ansible.builtin.file:
+    path: /var/chroot
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Crear tarball de chroot para sbuild con mmdebstrap si no existe
+  ansible.builtin.command:
+    cmd: >
+      mmdebstrap
+      --variant=buildd
+      {{ chroot_distro }}
+      {{ chroot_dir }}.tar.gz
+      http://deb.debian.org/debian/
+    creates: "{{ chroot_dir }}.tar.gz"
+  become: true
+
+- name: Crear directorio de configuración de sbuild para {{ target_user }}
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.config/sbuild"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+
+- name: Configurar sbuild en el HOME de {{ target_user }}
+  ansible.builtin.copy:
+    dest: "/home/{{ target_user }}/.config/sbuild/config.pl"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0644'
+    content: |
+      $chroot_mode = "unshare";
+      $build_dir = "$ENV{HOME}/Debs";
+
+- name: Recordatorio para activar permisos del grupo sbuild
+  ansible.builtin.debug:
+    msg:
+      - "======================================================================"
+      - "RECORDATORIO IMPORTANTE PARA {{ target_user | upper }}:"
+      - "El usuario '{{ target_user }}' fue añadido al grupo 'sbuild'."
+      - "Para aplicar los permisos sin reiniciar la sesión, ejecuta en tu terminal:"
+      - "  newgrp sbuild"
+      - "======================================================================"
+  become: false

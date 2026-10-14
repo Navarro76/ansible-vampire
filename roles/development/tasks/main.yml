@@ -10,3 +10,32 @@
 - name: Install ASDF version manager
   import_tasks: asdf.yml
   when: asdf_install
+
+- name: Importar tareas de configuración de sbuild
+  ansible.builtin.import_tasks: setup_sbuild.yml
+  tags: [development, sbuild]
+
+- name: Instalar bibliotecas de procesamiento científico para Python
+  import_tasks: install_python_wav.yml
+  become: true
+  tags: [development, python_wav]
+
+- name: Instalación y configuración de Visual Studio Code
+  import_tasks: install_vscode.yml
+  become: true
+  tags: [development, vscode]
+
+- name: Instalación del entorno de desarrollo ESP-IDF (Espressif)
+  import_tasks: install_esp_idf.yml
+  become: true
+  tags: [development, esp_idf]
+
+- name: Cofiguración de clave pública a GitHub
+  import_tasks: setup_github_ssh.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [development, github_ssh]
+
+- name: Instalar LazyGit
+  import_tasks: install_lazygit.yml
+  tags: [development, lazygit]

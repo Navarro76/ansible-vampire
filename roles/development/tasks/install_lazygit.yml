@@ -1,0 +1,55 @@
+---
+
+- name: Obtener información de la última versión de LazyGit desde GitHub API
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
+    return_content: true
+  register: lazygit_latest_release
+
+- name: Extraer la etiqueta de la versión (ej. 0.44.1)
+  ansible.builtin.set_fact:
+    lazygit_version: "{{ lazygit_latest_release.json.tag_name | regex_replace('^v', '') }}"
+
+- name: Comprobar si LazyGit ya está instalado
+  ansible.builtin.command: lazygit --version
+  register: lazygit_installed_version
+  failed_when: false
+  changed_when: false
+
+- name: Descargar e instalar LazyGit
+  when: >
+    lazygit_installed_version.rc != 0 or
+    (lazygit_version not in lazygit_installed_version.stdout)
+  block:
+    - name: Crear directorio temporal para la descarga
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: lazygit
+      register: lazygit_temp_dir
+
+    - name: Descargar el tarball de LazyGit
+      ansible.builtin.get_url:
+        url: "https://github.com/jesseduffield/lazygit/releases/download/v{{ lazygit_version }}/lazygit_{{ lazygit_version }}_Linux_x86_64.tar.gz"
+        dest: "{{ lazygit_temp_dir.path }}/lazygit.tar.gz"
+        mode: '0644'
+
+    - name: Extraer el ejecutable de LazyGit
+      ansible.builtin.unarchive:
+        src: "{{ lazygit_temp_dir.path }}/lazygit.tar.gz"
+        dest: "{{ lazygit_temp_dir.path }}"
+        remote_src: true
+
+    - name: Mover el binario a /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ lazygit_temp_dir.path }}/lazygit"
+        dest: /usr/local/bin/lazygit
+        mode: '0755'
+        remote_src: true
+      become: true
+
+  always:
+    - name: Limpiar archivos temporales
+      ansible.builtin.file:
+        path: "{{ lazygit_temp_dir.path }}"
+        state: absent
+      when: lazygit_temp_dir.path is defined
