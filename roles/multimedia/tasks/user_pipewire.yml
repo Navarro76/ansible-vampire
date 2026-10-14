@@ -1,7 +1,8 @@
 ---
+
 # ========== PipeWire y WirePlumber ==========
 
-# Obtener UID de user
+# Obtener UID de user (se ejecuta como root/ansible temporalmente para leer passwd, pero hereda el become)
 - name: Obtener UID de user
   ansible.builtin.getent:
     database: passwd
@@ -12,10 +13,22 @@
   set_fact:
     user_uid: "{{ user_passwd.ansible_facts.getent_passwd[target_user][1] }}"
 
-# Habiliar y arranva servicios
+# Tareas para silenciar la advertencia obsoleta de client-rt.conf
+- name: Asegurar directorio de configuración local de PipeWire
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.config/pipewire"
+    state: directory
+    mode: '0755'
+
+- name: Enlazar configuración de tiempo real obsoleta a client.conf
+  ansible.builtin.file:
+    src: /usr/share/pipewire/client.conf
+    dest: "/home/{{ target_user }}/.config/pipewire/client-rt.conf"
+    state: link
+  tags: [multimedia, audio, config]
+
+# Habilitar y arrancar servicios de usuario
 - name: Habilitar y arrancar servicios de PipeWire y WirePlumber para user
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
   systemd:
     name: "{{ item }}"
     scope: user
@@ -25,6 +38,9 @@
     - pipewire.service
     - pipewire-pulse.service
     - wireplumber.service
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ user_uid }}/bus"
   tags: [multimedia, audio, config]
 
 # Verificar que PipeWire este activo
@@ -35,10 +51,10 @@
   failed_when: false
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ user_uid }}/bus"
   tags: [multimedia, audio, verify]
 
 - name: Mostrar servidor de audio actual
   ansible.builtin.debug:
     msg: "{{ pactl_info.stdout_lines | default([]) }}"
   tags: [multimedia, audio, verify]
-

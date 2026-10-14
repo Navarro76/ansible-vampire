@@ -1,0 +1,13 @@
+---
+
+- name: Verificar si existe el paquete .deb de JamesDSP
+  ansible.builtin.stat:
+    path: "{{ jamesdsp_deb_path }}"
+  register: jamesdsp_deb
+
+- name: Instalar JamesDSP si existe el .deb
+  ansible.builtin.apt:
+    deb: "{{ jamesdsp_deb_path }}"
+    state: present
+  when: jamesdsp_deb.stat.exists
+

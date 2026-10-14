@@ -1,0 +1,3 @@
+---
+
+jamesdsp_deb_path: "{{ role_path }}/files/jamesdsp/jamesdsp_2.7.0_amd64.deb"

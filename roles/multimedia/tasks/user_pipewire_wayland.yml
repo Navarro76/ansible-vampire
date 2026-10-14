@@ -1,15 +1,21 @@
 ---
 # ========== xdg-desktop-portal ==========
+
+# Obtenemos el UID localmente en este archivo para asegurar que siempre exista
+- name: Obtener UID de user para Wayland
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ target_user }}"
+
 # Si migras a Wayland, considera habilitar manualmente xdg-desktop-portal como servicio de usuario.
 - name: Habilitar y arrancar xdg-desktop-portal para usuario
   systemd:
-    name: xdg-desktop-portal
+    name: xdg-desktop-portal.service
     scope: user
     enabled: true
     state: started
-  become: true
-  become_user: "{{ target_user }}"
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+    XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts.getent_passwd[target_user][1] }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_facts.getent_passwd[target_user][1] }}/bus"
   tags: [multimedia, audio, service]
 

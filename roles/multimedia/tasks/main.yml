@@ -17,6 +17,10 @@
   become: true
   tags: [multimedia, install, user, kogma]
 
+- import_tasks: install_jamesdsp.yml
+  become: true
+  tags: [multimedia, install, jamesdsp]
+
 # ========== Configuración de root ==========
 
 - import_tasks: root_rtkit.yml
