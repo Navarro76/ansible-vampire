@@ -32,4 +32,7 @@
       tags: [flatpak]
 
     - role: applications
-      tags: [flatpak]
+      tags: [applications]
+
+    - role: development
+      tags: [development]

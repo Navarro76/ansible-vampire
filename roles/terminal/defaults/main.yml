@@ -32,4 +32,5 @@ terminal_packages:
   - btm
   - nvtop
   - inxi
-
+  - fd-find
+  - netselect-apt
