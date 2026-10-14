@@ -1,0 +1,13 @@
+---
+# ... tus otros handlers existentes ...
+
+- name: Reiniciar servicio libvirtd
+  ansible.builtin.systemd:
+    name: libvirtd
+    state: restarted
+    enabled: true
+
+- name: Restart udisks2
+  ansible.builtin.systemd:
+    name: udisks2
+    state: restarted

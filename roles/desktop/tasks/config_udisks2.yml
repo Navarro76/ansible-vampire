@@ -1,0 +1,17 @@
+---
+
+- name: Asegurar directorio de configuración de udisks2
+  ansible.builtin.file:
+    path: /etc/udisks2
+    state: directory
+    mode: '0755'
+
+- name: Configurar drivers NTFS por defecto en udisks2
+  ansible.builtin.ini_file:
+    path: /etc/udisks2/mount_options.conf
+    section: defaults
+    option: ntfs_drivers
+    value: "ntfs-3g,ntfs"
+    mode: '0644'
+  notify: Restart udisks2
+

@@ -1,0 +1,30 @@
+---
+# Configurar entorno de virtualización QEMU/KVM optimizado
+
+- name: Instalar paquetes esenciales de QEMU/KVM y Virt-Manager
+  ansible.builtin.apt:
+    name:
+      - qemu-system-x86
+      - libvirt-daemon-system
+      - libvirt-clients
+      - virt-manager
+      - virtiofsd
+    state: present
+    update_cache: true
+
+- name: Asegurar que los grupos libvirt y kvm existan
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - libvirt
+    - kvm
+
+- name: Agregar usuario al ecosistema de virtualización
+  ansible.builtin.user:
+    name: "{{ target_user }}"
+    groups:
+      - libvirt
+      - kvm
+    append: true
+  notify: Reiniciar servicio libvirtd

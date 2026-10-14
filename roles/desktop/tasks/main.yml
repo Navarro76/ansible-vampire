@@ -31,7 +31,18 @@
   become: true
   tags: [desktop, ly]
 
+# Virt-Manager
+- name: Importar tareas de instalación de Virt-Manager
+  ansible.builtin.import_tasks: install_virt_manager.yml
+  become: true
+  tags: [desktop, virt-manager]
+
 # ========== Configuración de sistema ==========
+
+- name: Configurar drivers de udisks2
+  ansible.builtin.import_tasks: config_udisks2.yml
+  become: true
+  tags: [desktop, config, udisks2]
 
 # ========== Configuración root ==========
 
