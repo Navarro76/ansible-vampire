@@ -8,6 +8,10 @@
   become: true
   tags: [applications, download]
 
+- import_tasks: install_development.yml
+  become: true
+  tags: [applications, development]
+
 - import_tasks: install_system_tools.yml
   become: true
   tags: [applications, system_tools]
@@ -39,12 +43,19 @@
   become: true
   tags: [applications, graphics_packages]
 
+- import_tasks: install_networking.yml
+  become: true
+  tags: [applications, networking]
+
+- import_tasks: install_sheet_music.yml
+  become: true
+  tags: [applications, sheet_music]
+
+- import_tasks: install_iot.yml
+  become: true
+  tags: [applications, iot]
 
 # APLICACIONES INDIVIDUALES
-
-- import_tasks: install_tor.yml
-  become: true
-  tags: [applications, tor]
 
 - import_tasks: install_privoxy.yml
   become: true
@@ -76,6 +87,14 @@
 - import_tasks: install_tv_lite.yml
   become: true
   tags: [applications, tv-lite]
+
+- import_tasks: install_gdown.yml
+  tags: [applications, gdown]
+
+- import_tasks: install_samba.yml
+  become: true
+  tags: [applications, samba]
+
 
 #- import_tasks: install_psiphon_official.yml
 #  become: true

@@ -1,10 +1,13 @@
 # Ignorar carpetas files dentro de cada rol
+roles/applications/files/
 roles/common/files/
 roles/desktop/files/
+roles/development/files/
 roles/multimedia/files/
 roles/resources/files/
 roles/scripts/files/
 roles/terminal/files/
+
 
 # Ignorar archivos específicos dentro de roles/tasks
 roles/desktop/tasks/config_root_v1.yml

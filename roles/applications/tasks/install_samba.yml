@@ -1,0 +1,44 @@
+---
+
+- name: Instalar paquetes de Samba
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common-bin
+    state: present
+
+- name: Crear directorio para la carpeta compartida con Windows 10
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/Compartida-win10"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0775'
+
+- name: Configurar recurso compartido en smb.conf
+  ansible.builtin.blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [Compartida-win10]
+         path = /home/{{ target_user }}/Compartida-win10
+         browseable = yes
+         read only = no
+         guest ok = no
+         valid users = {{ target_user }}
+         force user = {{ target_user }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - COMPARTIDA WIN10"
+  notify: Reiniciar servicio Samba
+
+- name: Verificar si el usuario ya existe en Samba
+  ansible.builtin.command: "pdbedit -L -u {{ target_user }}"
+  register: samba_user_check
+  failed_when: false
+  changed_when: false
+
+- name: Configurar contraseña de Samba para el usuario
+  ansible.builtin.shell: |
+    set -o pipefail
+    (echo "{{ user_smb_password }}"; echo "{{ user_smb_password }}") | smbpasswd -s -a {{ target_user }}
+  args:
+    executable: /bin/bash
+  when: samba_user_check.rc != 0

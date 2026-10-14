@@ -1,0 +1,51 @@
+---
+
+# Paths correctos y consistentes para become_user
+target_home: "/home/{{ target_user }}"
+
+# aria2
+aria2_conf_dir: "/home/{{ target_user }}/.config/aria2"
+ariang_version: "1.3.7" # Puedes verificar la última en GitHub
+systemd_user_dir: "{{ target_home }}/.config/systemd/user"
+
+# typst
+typst_install_path: "{{ target_home }}/.cargo/bin"
+
+# Canal de instalación
+typst_channel: "stable"        # stable | dev
+
+# Opciones del rol
+typst_autoupdate: false
+typst_create_wrapper: false
+
+# Typst preview
+typst_preview: "none"          # none | cli | nvim | gui
+
+# TV-Lite: ruta de tu repositorio de binarios (en el espacio de usuario)
+bin_path: "{{ role_path }}/files/bin"
+dest_bin_path: "/usr/local/bin/tv-lite"
+
+# Directorios de destino en el sistema del usuario
+dest_amuled_bin_dir: "{{ target_home }}/.local/bin"
+dest_amuled_bin_path: "{{ dest_amuled_bin_dir }}/amuled-3.0"
+dest_amuled_lib_path: "{{ target_home }}/.local/lib/amule3"
+dest_amule_config_dir: "{{ target_home }}/.aMule"
+dest_systemd_user_dir: "{{ target_home }}/.config/systemd/user"
+
+# Rutas de origen dentro del rol (cavernicola style)
+apps_dir: "{{ role_path }}/files"
+amuled_src_bin: "{{ apps_dir }}/amuled/amuled-3.0"
+amuled_src_lib_dir: "{{ apps_dir }}/amuled/lib/"
+
+# Password samba
+user_smb_password: "namoal19"
+
+# Modern style:
+# amuled_src_bin: "amuled/amuled-3.0"
+# amuled_src_lib_dir: "amuled/squashfs-root/usr/lib/"
+
+# Variables Psiphon
+#psiphon_dir: "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go"
+#psiphon_core_repo: "github.com/Psiphon-Labs/psiphon-tunnel-core/ConsoleClient"
+#psiphon_brainfuck_repo: "github.com/aztecrabbit/brainfuck-psiphon-pro-go"
+#psiphon_bin_path: "/home/{{ target_user }}/go/src/github.com/aztecrabbit/brainfuck-psiphon-pro-go/brainfuck-psiphon-pro-go"

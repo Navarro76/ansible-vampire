@@ -5,13 +5,11 @@
     name: privoxy
     state: restarted
 
-- name: reiniciar tor
-  systemd:
-    name: tor
-    state: restarted
-
 - name: Reload Systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
 
-
+- name: Reiniciar servicio Samba
+  ansible.builtin.systemd:
+    name: smbd
+    state: restarted

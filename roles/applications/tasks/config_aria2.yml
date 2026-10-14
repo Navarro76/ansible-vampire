@@ -27,6 +27,10 @@
       rpc-listen-all=true
       max-connection-per-server=16
       split=16
+      max-concurrent-downloads=1
+      on-download-complete=/home/alex/.config/aria2/notify.sh
+      on-download-error=/home/alex/.config/aria2/notify-error.sh
+      check-certificate=false
 
 - name: Instalar AriaNg (WebUI)
   unarchive:

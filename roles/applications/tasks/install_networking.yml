@@ -1,0 +1,8 @@
+---
+
+# Aplicaciones networking
+- name: Instalar aplicaciones networking
+  apt:
+    name: "{{ networking_apps }}"
+    state: present
+    update_cache: yes

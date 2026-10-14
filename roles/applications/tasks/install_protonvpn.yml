@@ -1,29 +1,36 @@
 ---
-- name: Limpiar instalaciones y archivos conflictivos previos
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "/etc/apt/sources.list.d/protonvpn.list"
-    - "/etc/apt/sources.list.d/protonvpn-stable.sources"
-    - "/usr/share/keyrings/protonvpn-archive-keyring.asc"
-    - "/usr/share/keyrings/protonvpn-stable-archive-keyring.gpg"
-
 - name: Descargar el paquete de configuración del repositorio ProtonVPN (v1.0.8)
   ansible.builtin.get_url:
     url: https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
     dest: /tmp/protonvpn-stable-release_1.0.8_all.deb
     mode: '0644'
     checksum: sha256:0b14e71586b22e498eb20926c48c7b434b751149b1f2af9902ef1cfe6b03e180
+    force: no
 
 - name: Instalar el paquete de repositorio de ProtonVPN
   ansible.builtin.apt:
     deb: /tmp/protonvpn-stable-release_1.0.8_all.deb
 
-- name: Actualizar cache de apt e instalar Proton VPN GUI y CLI
+- name: Instalar y mantener actualizados Proton VPN GUI y CLI
   ansible.builtin.apt:
     name:
       - proton-vpn-gnome-desktop
       - proton-vpn-cli
-    state: present
+      - python3-proton-vpn-api-core
+    state: latest
     update_cache: yes
+
+- name: Deshabilitar servicio de Split Tunneling (falla en Sway sin NetworkManager BPF)
+  ansible.builtin.systemd:
+    name: me.proton.vpn.split_tunneling.service
+    state: stopped
+    enabled: no
+  failed_when: false
+
+- name: Enmascarar servicio de Split Tunneling para evitar bloqueos
+  ansible.builtin.systemd:
+    name: me.proton.vpn.split_tunneling.service
+    state: stopped
+    enabled: no
+    masked: yes
+  failed_when: false

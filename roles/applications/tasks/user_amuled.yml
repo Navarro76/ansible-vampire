@@ -1,0 +1,101 @@
+---
+
+- name: Obtener información del usuario target_user vía getent
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ target_user }}"
+
+- name: Definir variable user_uid
+  ansible.builtin.set_fact:
+    user_uid: "{{ getent_passwd[target_user][1] }}"
+
+- name: Asegurar directorios de destino para amuled
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ dest_amuled_bin_dir }}"
+    - "{{ dest_amuled_lib_path }}"
+    - "{{ dest_amule_config_dir }}"
+    - "{{ dest_systemd_user_dir }}"
+
+- name: Copiar ejecutable amuled-3.0
+  ansible.builtin.copy:
+    src: "{{ amuled_src_bin }}"
+    dest: "{{ dest_amuled_bin_path }}"
+    mode: '0755'
+
+- name: Copiar librerías de aMule a {{ dest_amuled_lib_path }}
+  ansible.builtin.copy:
+    src: "{{ amuled_src_lib_dir }}"
+    dest: "{{ dest_amuled_lib_path }}/"
+    mode: '0755'
+    follow_symlinks: no
+
+- name: Descargar server.met inicial si no existe
+  ansible.builtin.get_url:
+    url: "http://www.peerates.net/servers.met"
+    dest: "{{ dest_amule_config_dir }}/server.met"
+    force: no
+    mode: '0644'
+
+- name: Descargar nodes.dat inicial para la red Kad si no existe
+  ansible.builtin.get_url:
+    url: "https://nodes-dat.com/objects/nodes.dat"
+    dest: "{{ dest_amule_config_dir }}/nodes.dat"
+    force: no
+    mode: '0644'
+
+- name: Crear unidad de servicio systemd de usuario para amuled
+  ansible.builtin.copy:
+    dest: "{{ dest_systemd_user_dir }}/amuled.service"
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=aMule 3.0 Daemon
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      Environment="LD_LIBRARY_PATH={{ dest_amuled_lib_path }}"
+      ExecStart={{ dest_amuled_bin_path }}
+      Restart=on-failure
+      RestartSec=10
+
+      [Install]
+      WantedBy=default.target
+
+- name: Recargar systemd de usuario, habilitar e iniciar amuled
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+  ansible.builtin.systemd_service:
+    name: amuled
+    scope: user
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+
+- name: Verificar el estado del servicio amuled
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ user_uid }}"
+  ansible.builtin.systemd_service:
+    name: amuled
+    scope: user
+  register: amuled_status
+
+- name: Mostrar estado del servicio amuled
+  ansible.builtin.debug:
+    msg:
+      - "Estado del servicio: {{ amuled_status.status.ActiveState }}"
+      - "Subestado: {{ amuled_status.status.SubState }}"
+      - "PID Principal: {{ amuled_status.status.MainPID }}"
+
+- name: Recordatorio de sincronización con chezmoi
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------------"
+      - " REMINDER: Recuerda ejecutar 'chezmoi apply' en la terminal de {{ target_user }}"
+      - " para desplegar ~/.aMule/amule.conf desde tu plantilla con KeePassXC."
+      - "----------------------------------------------------------------------"

@@ -1,4 +1,4 @@
----bin_path: "{{ role_path }}/files/bin"
+---
 
 - name: Verificar si el binario precompilado existe en el repositorio del rol
   ansible.builtin.stat:

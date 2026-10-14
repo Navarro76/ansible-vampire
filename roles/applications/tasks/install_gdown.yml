@@ -1,0 +1,20 @@
+---
+
+# 1. Requiere root para instalar los paquetes APT del sistema
+- name: Asegurar dependencias de Python y pipx a nivel de sistema
+  ansible.builtin.apt:
+    name:
+      - pipx
+      - python3-pip
+      - python3-venv
+    state: present
+    update_cache: yes
+  become: true
+
+# 2. Se ejecuta específicamente con tu usuario para instalar gdown en tu HOME
+- name: Instalar gdown vía pipx para el usuario alex
+  community.general.pipx:
+    name: gdown
+    state: present
+  become: true
+  become_user: alex
