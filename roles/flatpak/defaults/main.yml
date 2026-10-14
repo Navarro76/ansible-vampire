@@ -54,6 +54,9 @@ flatpak_plugins_audio:
   - org.freedesktop.LinuxAudio.Plugins.Yoshimi
   - org.freedesktop.LinuxAudio.Plugins.guitarixvst
 
+flatpak_streaming_video:
+  - com.stremio.Stremio
+
 # Controla si se actualizan las apps del usuario automáticamente
 flatpak_update: true
 

@@ -50,6 +50,11 @@
   become_user: "{{ target_user }}"
   tags: [flatpak, user, flatpak_audio_recording]
 
+- import_tasks: user_flatpak_stremingvideo.yml
+  become: true
+  become_user: "{{ target_user }}"
+  tags: [flatpak, user, flatpak_stremingvideo]
+
 - import_tasks: user_xdg_portal_wlr.yml
   become: true
   become_user: "{{ target_user }}"
